@@ -1,0 +1,424 @@
+﻿id_formulaire,aire_sante,age_enfant,sexe_parent,instruction,hesitation,raison_principale,intention_actuelle,hesitation_declaree_I01,retard_intentionnel_I02,refus_I03,exposition_rumeur_G03,rendez_vous_manque_C07,rupture_vaccin_H06,temps_trajet_H01,source_information_principale,score_confiance_simule_1_5,score_connaissances_simule_0_10,date_soumission
+LEM-212,Salongo,12–17 mois,Femme,Aucun,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,≥60 min,Église,2,4,2026-09-14
+LEM-362,Ecole,6–11 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,1,15–29 min,Famille / amis,3,8,2026-08-13
+LEM-068,Commercial,18–23 mois,Femme,Primaire,1,Influence familiale,Accepter avec hésitation,1,1,0,1,1,1,≥60 min,Agent de santé,4,4,2026-10-02
+LEM-139,Madrandele,12–17 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,1,≥60 min,Agent de santé,3,8,2026-08-12
+LEM-170,Kemi,6–11 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,≥60 min,Agent de santé,5,8,2026-09-05
+LEM-187,Kimpwanza,12–17 mois,Femme,Primaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,1,0,30–59 min,Famille / amis,4,5,2026-08-31
+LEM-184,Echangeur,12–17 mois,Femme,Primaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,30–59 min,Agent de santé,4,4,2026-10-07
+LEM-017,Kemi,18–23 mois,Femme,Primaire,1,Peur des effets indésirables,Retarder certains,1,1,0,1,0,0,30–59 min,Église,2,5,2026-08-23
+LEM-241,Masano,6–11 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,15–29 min,Famille / amis,3,7,2026-09-06
+LEM-133,Gombele,6–11 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,1,30–59 min,WhatsApp,5,7,2026-08-19
+LEM-269,Salongo,18–23 mois,Femme,Aucun,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,1,1,30–59 min,Facebook / TikTok,5,7,2026-10-08
+LEM-347,Salongo,12–17 mois,Homme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,1,≥60 min,WhatsApp,5,7,2026-10-02
+LEM-340,Masano,0–5 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,1,30–59 min,Agent de santé,4,8,2026-10-05
+LEM-331,Molo,12–17 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,0,30–59 min,Agent de santé,5,5,2026-08-28
+LEM-401,Mbanza Lemba,6–11 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,15–29 min,Famille / amis,4,6,2026-08-04
+LEM-332,Ecole,0–5 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,1,30–59 min,WhatsApp,3,4,2026-10-06
+LEM-277,Molo,12–17 mois,Homme,Aucun,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,0,15–29 min,WhatsApp,5,5,2026-08-25
+LEM-196,Masano,18–23 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,<15 min,Agent de santé,4,6,2026-08-04
+LEM-097,Echangeur,12–17 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,1,0,30–59 min,Agent de santé,3,5,2026-09-25
+LEM-275,Gombele,12–17 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,0,≥60 min,Radio / TV,4,8,2026-08-01
+LEM-329,Ecole,6–11 mois,Femme,Aucun,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,0,15–29 min,Église,4,7,2026-09-18
+LEM-120,Plateau,18–23 mois,Homme,Aucun,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,0,30–59 min,Radio / TV,4,8,2026-08-11
+LEM-179,Mbanza Lemba,0–5 mois,Homme,Primaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,30–59 min,Agent de santé,4,6,2026-08-24
+LEM-191,Molo,12–17 mois,Femme,Primaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,30–59 min,Famille / amis,5,5,2026-10-04
+LEM-237,Foire,18–23 mois,Femme,Primaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,1,<15 min,WhatsApp,4,10,2026-08-03
+LEM-338,Madrandele,18–23 mois,Homme,Aucun,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,1,0,30–59 min,Agent de santé,4,5,2026-08-10
+LEM-294,Madrandele,12–17 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,1,30–59 min,WhatsApp,4,8,2026-08-27
+LEM-286,Mbanza Lemba,12–17 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,1,≥60 min,Facebook / TikTok,4,7,2026-08-14
+LEM-018,Echangeur,6–11 mois,Femme,Supérieur,1,Rumeur / désinformation,Accepter avec hésitation,1,0,0,1,1,0,30–59 min,Église,3,3,2026-10-07
+LEM-014,Livulu,12–17 mois,Femme,Secondaire,1,Rumeur / désinformation,Accepter avec hésitation,1,0,0,1,1,0,30–59 min,Radio / TV,2,3,2026-09-19
+LEM-309,Masano,12–17 mois,Homme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,<15 min,Agent de santé,5,6,2026-09-16
+LEM-202,Salongo,18–23 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,0,<15 min,Agent de santé,3,6,2026-08-23
+LEM-257,Masano,6–11 mois,Femme,Primaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,15–29 min,WhatsApp,3,7,2026-08-15
+LEM-246,Kimpwanza,6–11 mois,Homme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,1,15–29 min,Famille / amis,2,8,2026-08-03
+LEM-266,Kimpwanza,18–23 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,15–29 min,Agent de santé,4,7,2026-09-10
+LEM-290,Gombele,12–17 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,<15 min,Agent de santé,5,9,2026-09-16
+LEM-082,Ecole,18–23 mois,Femme,Secondaire,1,Peur des effets indésirables,Accepter avec hésitation,1,1,1,1,1,0,30–59 min,WhatsApp,3,5,2026-09-19
+LEM-251,Foire,12–17 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,30–59 min,Famille / amis,4,7,2026-08-12
+LEM-185,Ecole,0–5 mois,Homme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,15–29 min,WhatsApp,4,9,2026-10-07
+LEM-315,Foire,0–5 mois,Homme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,0,30–59 min,Église,4,7,2026-09-24
+LEM-306,Salongo,6–11 mois,Homme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,1,15–29 min,Agent de santé,5,7,2026-08-30
+LEM-047,Livulu,18–23 mois,Femme,Supérieur,1,Rumeur / désinformation,Accepter sans hésiter,1,1,0,1,1,0,30–59 min,Famille / amis,1,6,2026-10-06
+LEM-193,Echangeur,12–17 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,30–59 min,Famille / amis,4,7,2026-09-08
+LEM-249,Kimpwanza,12–17 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter avec hésitation,0,0,0,0,0,0,<15 min,WhatsApp,3,8,2026-09-29
+LEM-305,Foire,12–17 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,1,1,30–59 min,WhatsApp,3,7,2026-08-01
+LEM-052,Masano,6–11 mois,Homme,Primaire,1,Expérience négative,Retarder certains,1,1,0,1,1,1,15–29 min,Église,3,7,2026-08-13
+LEM-013,Salongo,18–23 mois,Homme,Primaire,1,Méfiance envers les services,Retarder certains,1,1,0,1,1,0,15–29 min,Radio / TV,4,5,2026-09-23
+LEM-146,Commercial,0–5 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,30–59 min,Radio / TV,5,7,2026-09-12
+LEM-293,Kimpwanza,12–17 mois,Homme,Aucun,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,15–29 min,Famille / amis,3,8,2026-10-10
+LEM-181,Kimpwanza,12–17 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,1,0,15–29 min,Facebook / TikTok,5,8,2026-09-05
+LEM-159,Plateau,0–5 mois,Homme,Primaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,1,<15 min,Agent de santé,5,8,2026-10-02
+LEM-029,Kemi,6–11 mois,Femme,Secondaire,1,Doute sur l’efficacité,Accepter avec hésitation,1,1,0,1,1,0,≥60 min,Facebook / TikTok,3,4,2026-09-28
+LEM-071,Ecole,6–11 mois,Femme,Secondaire,1,Rumeur / désinformation,Accepter avec hésitation,1,1,1,1,0,0,<15 min,WhatsApp,2,7,2026-09-09
+LEM-328,Ecole,12–17 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,<15 min,Agent de santé,3,9,2026-09-09
+LEM-058,Kimpwanza,18–23 mois,Femme,Secondaire,1,Expérience négative,Retarder certains,1,1,0,1,0,0,30–59 min,WhatsApp,2,4,2026-08-28
+LEM-350,Madrandele,6–11 mois,Homme,Primaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,30–59 min,Agent de santé,4,6,2026-08-05
+LEM-399,Gombele,12–17 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,1,0,15–29 min,Agent de santé,3,8,2026-09-08
+LEM-066,Kimpwanza,18–23 mois,Femme,Aucun,1,Peur des effets indésirables,Retarder certains,1,1,0,1,1,0,30–59 min,Agent de santé,3,5,2026-09-13
+LEM-219,Masano,18–23 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,30–59 min,Radio / TV,5,8,2026-10-11
+LEM-102,Gombele,18–23 mois,Femme,Aucun,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,0,<15 min,Agent de santé,4,8,2026-09-21
+LEM-265,Plateau,18–23 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,0,15–29 min,Agent de santé,4,7,2026-08-15
+LEM-109,Ecole,6–11 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter avec hésitation,0,0,0,1,0,0,≥60 min,Famille / amis,5,5,2026-09-17
+LEM-125,Plateau,6–11 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,1,<15 min,Agent de santé,4,8,2026-08-28
+LEM-039,Molo,18–23 mois,Homme,Primaire,1,Religion / croyance,Retarder certains,1,0,0,1,1,0,≥60 min,Radio / TV,3,4,2026-09-04
+LEM-383,Plateau,12–17 mois,Femme,Primaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,≥60 min,Facebook / TikTok,5,9,2026-09-26
+LEM-327,Salongo,18–23 mois,Homme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,<15 min,Facebook / TikTok,4,7,2026-09-28
+LEM-157,Livulu,0–5 mois,Autre / NSP,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,30–59 min,Radio / TV,3,7,2026-10-05
+LEM-404,Madrandele,6–11 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,1,<15 min,Agent de santé,4,4,2026-08-22
+LEM-421,Ecole,0–5 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,1,0,30–59 min,Agent de santé,5,8,2026-08-25
+LEM-164,Gombele,6–11 mois,Homme,Primaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,1,<15 min,Famille / amis,5,8,2026-10-14
+LEM-046,Kimpwanza,12–17 mois,Femme,Secondaire,1,Religion / croyance,Accepter avec hésitation,1,1,0,1,0,0,15–29 min,Agent de santé,4,4,2026-10-01
+LEM-420,Plateau,0–5 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,30–59 min,Agent de santé,3,6,2026-08-10
+LEM-114,Salongo,18–23 mois,Homme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,≥60 min,Église,4,4,2026-08-20
+LEM-380,Livulu,0–5 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,<15 min,WhatsApp,3,9,2026-08-25
+LEM-278,Madrandele,6–11 mois,Femme,Primaire,0,Aucune / non applicable,Accepter avec hésitation,0,0,0,0,1,0,15–29 min,Radio / TV,4,8,2026-08-13
+LEM-289,Kimpwanza,0–5 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,15–29 min,Agent de santé,5,5,2026-08-21
+LEM-368,Kemi,6–11 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,30–59 min,Famille / amis,3,7,2026-08-09
+LEM-287,Molo,0–5 mois,Homme,Supérieur,0,Aucune / non applicable,Accepter avec hésitation,0,0,0,1,0,0,30–59 min,Agent de santé,3,8,2026-09-16
+LEM-412,Commercial,12–17 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,30–59 min,Agent de santé,4,7,2026-08-24
+LEM-057,Gombele,0–5 mois,Homme,Secondaire,1,Peur des effets indésirables,Accepter avec hésitation,1,0,0,1,0,0,15–29 min,Radio / TV,3,4,2026-08-31
+LEM-065,Kemi,0–5 mois,Femme,Secondaire,1,Peur des effets indésirables,Accepter avec hésitation,1,1,0,1,1,0,15–29 min,Église,4,8,2026-09-01
+LEM-180,Masano,12–17 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,1,30–59 min,Radio / TV,3,7,2026-10-05
+LEM-369,Kemi,0–5 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,≥60 min,WhatsApp,5,7,2026-09-18
+LEM-206,Gombele,18–23 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,30–59 min,Radio / TV,3,5,2026-10-06
+LEM-012,Echangeur,12–17 mois,Homme,Primaire,1,Peur des effets indésirables,Retarder certains,1,1,0,1,1,1,≥60 min,Famille / amis,2,4,2026-08-25
+LEM-221,Foire,6–11 mois,Homme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,30–59 min,WhatsApp,3,5,2026-09-18
+LEM-195,Echangeur,18–23 mois,Homme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,0,30–59 min,Agent de santé,5,8,2026-10-09
+LEM-384,Masano,6–11 mois,Femme,Aucun,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,<15 min,Radio / TV,5,8,2026-08-07
+LEM-011,Kemi,18–23 mois,Femme,Primaire,1,Peur des effets indésirables,Retarder certains,1,1,0,0,1,1,15–29 min,Agent de santé,4,7,2026-10-07
+LEM-297,Foire,6–11 mois,Femme,Primaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,≥60 min,Famille / amis,4,9,2026-09-07
+LEM-032,Livulu,6–11 mois,Femme,Supérieur,1,Vaccination jugée non nécessaire,Accepter sans hésiter,1,0,1,1,1,0,15–29 min,Famille / amis,2,4,2026-08-23
+LEM-303,Kimpwanza,12–17 mois,Homme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,0,30–59 min,Radio / TV,5,7,2026-08-02
+LEM-392,Kimpwanza,6–11 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,15–29 min,Radio / TV,4,9,2026-08-30
+LEM-280,Madrandele,0–5 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,<15 min,Agent de santé,3,7,2026-09-10
+LEM-040,Madrandele,6–11 mois,Femme,Secondaire,1,Peur des effets indésirables,Accepter avec hésitation,1,0,0,1,0,0,<15 min,Église,3,2,2026-09-16
+LEM-248,Ecole,6–11 mois,Femme,Primaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,0,15–29 min,Église,3,10,2026-10-03
+LEM-407,Ecole,12–17 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,15–29 min,Agent de santé,4,8,2026-09-29
+LEM-203,Mbanza Lemba,18–23 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,15–29 min,Agent de santé,5,7,2026-09-17
+LEM-078,Plateau,12–17 mois,Femme,Supérieur,1,Peur des effets indésirables,Accepter avec hésitation,1,0,1,0,1,0,<15 min,Agent de santé,1,4,2026-09-30
+LEM-373,Livulu,12–17 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,0,30–59 min,Église,3,8,2026-09-22
+LEM-175,Kimpwanza,18–23 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,15–29 min,Agent de santé,4,6,2026-10-07
+LEM-198,Madrandele,18–23 mois,Femme,Primaire,0,Aucune / non applicable,Accepter avec hésitation,0,0,0,0,0,0,<15 min,WhatsApp,5,8,2026-10-05
+LEM-253,Commercial,6–11 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter avec hésitation,0,0,0,0,0,0,30–59 min,Famille / amis,4,10,2026-10-06
+LEM-103,Kemi,0–5 mois,Homme,Aucun,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,0,≥60 min,Famille / amis,5,7,2026-08-04
+LEM-087,Kemi,0–5 mois,Homme,Secondaire,1,Expérience négative,Accepter avec hésitation,1,0,0,1,0,0,15–29 min,Agent de santé,2,5,2026-10-11
+LEM-366,Kemi,12–17 mois,Homme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,≥60 min,WhatsApp,5,9,2026-09-03
+LEM-054,Mbanza Lemba,18–23 mois,Femme,Secondaire,1,Doute sur l’efficacité,Refuser certains,1,1,0,1,1,1,15–29 min,Radio / TV,4,5,2026-08-16
+LEM-031,Kimpwanza,6–11 mois,Femme,Primaire,1,Méfiance envers les services,Retarder certains,1,1,1,1,1,0,15–29 min,Agent de santé,2,6,2026-09-26
+LEM-106,Salongo,0–5 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,<15 min,Radio / TV,4,8,2026-08-31
+LEM-344,Kimpwanza,0–5 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,1,<15 min,Radio / TV,3,9,2026-09-08
+LEM-127,Commercial,18–23 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,1,0,<15 min,Agent de santé,5,10,2026-08-09
+LEM-077,Masano,12–17 mois,Femme,Secondaire,1,Méfiance envers les services,Retarder certains,1,1,0,1,0,0,<15 min,Agent de santé,2,7,2026-09-17
+LEM-067,Salongo,18–23 mois,Femme,Secondaire,1,Doute sur l’efficacité,Accepter avec hésitation,1,1,1,1,1,0,30–59 min,Église,3,6,2026-08-23
+LEM-372,Madrandele,18–23 mois,Homme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,1,0,30–59 min,Église,4,8,2026-08-08
+LEM-101,Plateau,6–11 mois,Homme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,15–29 min,WhatsApp,4,6,2026-09-23
+LEM-304,Kemi,6–11 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,1,1,30–59 min,Facebook / TikTok,2,7,2026-08-14
+LEM-379,Salongo,0–5 mois,Homme,Primaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,30–59 min,Facebook / TikTok,3,7,2026-09-02
+LEM-363,Commercial,6–11 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,15–29 min,Agent de santé,4,7,2026-08-13
+LEM-140,Commercial,12–17 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter avec hésitation,0,0,0,0,1,0,15–29 min,Agent de santé,5,7,2026-08-19
+LEM-059,Salongo,18–23 mois,Femme,Supérieur,1,Vaccination jugée non nécessaire,Accepter avec hésitation,1,1,0,1,1,0,≥60 min,Agent de santé,3,3,2026-09-24
+LEM-072,Molo,6–11 mois,Femme,Supérieur,1,Rumeur / désinformation,Accepter avec hésitation,1,1,0,1,0,1,15–29 min,Agent de santé,2,6,2026-09-18
+LEM-115,Livulu,6–11 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,1,0,15–29 min,Famille / amis,4,6,2026-08-14
+LEM-211,Mbanza Lemba,6–11 mois,Homme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,30–59 min,Agent de santé,4,7,2026-08-27
+LEM-393,Gombele,0–5 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,1,<15 min,Agent de santé,3,10,2026-08-29
+LEM-349,Mbanza Lemba,12–17 mois,Femme,Primaire,0,Aucune / non applicable,Accepter avec hésitation,0,0,0,1,0,0,<15 min,Radio / TV,4,6,2026-09-23
+LEM-085,Kimpwanza,0–5 mois,Femme,Secondaire,1,Autre,Retarder certains,1,1,0,1,1,0,≥60 min,Agent de santé,3,4,2026-09-07
+LEM-122,Gombele,12–17 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,1,15–29 min,Agent de santé,4,8,2026-09-29
+LEM-386,Echangeur,6–11 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,30–59 min,Agent de santé,5,9,2026-08-17
+LEM-360,Ecole,12–17 mois,Homme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,≥60 min,Radio / TV,3,6,2026-09-27
+LEM-270,Molo,12–17 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,0,≥60 min,Agent de santé,4,9,2026-10-14
+LEM-161,Kimpwanza,12–17 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,15–29 min,Agent de santé,2,9,2026-09-02
+LEM-214,Plateau,12–17 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,1,≥60 min,Facebook / TikTok,4,9,2026-08-30
+LEM-416,Gombele,18–23 mois,Femme,Aucun,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,30–59 min,Agent de santé,5,6,2026-08-05
+LEM-283,Commercial,0–5 mois,Homme,Primaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,≥60 min,Radio / TV,5,9,2026-08-15
+LEM-070,Foire,0–5 mois,Homme,Secondaire,1,Expérience négative,Retarder certains,1,1,0,1,1,1,30–59 min,WhatsApp,2,4,2026-08-02
+LEM-138,Kemi,0–5 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,≥60 min,Église,5,8,2026-09-30
+LEM-028,Masano,18–23 mois,Femme,Secondaire,1,Peur des effets indésirables,Accepter avec hésitation,1,0,0,1,0,1,30–59 min,Agent de santé,3,4,2026-10-02
+LEM-197,Mbanza Lemba,6–11 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,30–59 min,WhatsApp,4,4,2026-08-19
+LEM-151,Mbanza Lemba,0–5 mois,Autre / NSP,Primaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,≥60 min,Famille / amis,4,9,2026-10-07
+LEM-024,Gombele,18–23 mois,Femme,Secondaire,1,Peur des effets indésirables,Accepter sans hésiter,1,1,0,1,1,1,15–29 min,Famille / amis,3,4,2026-09-24
+LEM-142,Kemi,18–23 mois,Femme,Aucun,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,<15 min,Radio / TV,5,6,2026-08-07
+LEM-391,Livulu,12–17 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,15–29 min,Agent de santé,4,9,2026-09-16
+LEM-023,Madrandele,12–17 mois,Femme,Primaire,1,Peur des effets indésirables,Accepter avec hésitation,1,0,0,1,1,0,<15 min,Agent de santé,2,6,2026-09-17
+LEM-182,Kemi,12–17 mois,Autre / NSP,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,1,1,15–29 min,WhatsApp,4,9,2026-09-20
+LEM-149,Ecole,6–11 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,15–29 min,Facebook / TikTok,3,6,2026-08-17
+LEM-422,Mbanza Lemba,12–17 mois,Femme,Aucun,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,1,0,<15 min,Agent de santé,5,7,2026-10-05
+LEM-317,Livulu,18–23 mois,Femme,Primaire,0,Aucune / non applicable,Accepter avec hésitation,0,0,0,1,0,0,15–29 min,Agent de santé,4,6,2026-10-08
+LEM-292,Plateau,6–11 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,30–59 min,Famille / amis,4,10,2026-09-27
+LEM-025,Plateau,18–23 mois,Femme,Secondaire,1,Influence familiale,Accepter avec hésitation,1,1,0,1,1,1,30–59 min,Agent de santé,2,9,2026-10-14
+LEM-365,Molo,0–5 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,15–29 min,Agent de santé,4,10,2026-08-03
+LEM-092,Plateau,12–17 mois,Femme,Supérieur,1,Autre,Accepter sans hésiter,1,0,0,1,1,0,30–59 min,WhatsApp,3,7,2026-10-14
+LEM-235,Madrandele,0–5 mois,Femme,Aucun,0,Aucune / non applicable,Accepter avec hésitation,0,0,0,0,0,0,15–29 min,Facebook / TikTok,4,7,2026-10-05
+LEM-105,Gombele,18–23 mois,Femme,Primaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,1,0,15–29 min,Agent de santé,3,7,2026-08-25
+LEM-143,Ecole,6–11 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,15–29 min,Église,5,8,2026-09-08
+LEM-063,Echangeur,6–11 mois,Femme,Secondaire,1,Influence familiale,Accepter avec hésitation,1,1,0,1,1,0,15–29 min,Agent de santé,4,2,2026-08-30
+LEM-132,Plateau,0–5 mois,Femme,Secondaire,0,Aucune / non applicable,Retarder certains,0,0,0,0,0,0,15–29 min,WhatsApp,5,8,2026-09-11
+LEM-406,Foire,18–23 mois,Femme,Primaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,30–59 min,Agent de santé,3,9,2026-08-04
+LEM-038,Commercial,18–23 mois,Homme,Secondaire,1,Peur des effets indésirables,Accepter avec hésitation,1,1,0,0,0,0,30–59 min,Famille / amis,1,4,2026-09-15
+LEM-234,Commercial,18–23 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,15–29 min,Agent de santé,5,5,2026-08-31
+LEM-256,Gombele,0–5 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,1,15–29 min,Agent de santé,4,8,2026-09-10
+LEM-094,Plateau,6–11 mois,Femme,Secondaire,1,Influence familiale,Accepter sans hésiter,1,1,0,0,1,0,<15 min,Église,1,5,2026-08-02
+LEM-200,Foire,0–5 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,1,30–59 min,Agent de santé,4,10,2026-09-30
+LEM-390,Echangeur,6–11 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,30–59 min,Église,4,7,2026-08-07
+LEM-192,Masano,0–5 mois,Homme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,0,15–29 min,WhatsApp,4,6,2026-10-11
+LEM-250,Commercial,6–11 mois,Femme,Secondaire,0,Aucune / non applicable,Retarder certains,0,0,0,0,0,0,<15 min,Facebook / TikTok,5,9,2026-08-07
+LEM-359,Kimpwanza,6–11 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,30–59 min,Église,5,4,2026-09-16
+LEM-112,Echangeur,12–17 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,15–29 min,Agent de santé,3,7,2026-10-07
+LEM-381,Echangeur,6–11 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,30–59 min,Agent de santé,3,6,2026-10-15
+LEM-415,Kemi,18–23 mois,Femme,Primaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,0,15–29 min,WhatsApp,5,8,2026-08-20
+LEM-255,Commercial,6–11 mois,Femme,Primaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,1,≥60 min,Famille / amis,5,10,2026-08-24
+LEM-301,Salongo,0–5 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,<15 min,Radio / TV,5,6,2026-09-21
+LEM-316,Madrandele,6–11 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,30–59 min,Église,3,8,2026-09-17
+LEM-339,Plateau,12–17 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,1,30–59 min,Agent de santé,5,8,2026-08-13
+LEM-027,Kimpwanza,6–11 mois,Femme,Supérieur,1,Méfiance envers les services,Accepter avec hésitation,1,1,0,1,1,0,15–29 min,Facebook / TikTok,3,5,2026-08-28
+LEM-302,Livulu,0–5 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,15–29 min,WhatsApp,3,7,2026-09-25
+LEM-402,Madrandele,12–17 mois,Homme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,30–59 min,Agent de santé,5,8,2026-08-21
+LEM-247,Kimpwanza,12–17 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,30–59 min,Agent de santé,3,7,2026-09-01
+LEM-364,Livulu,12–17 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,≥60 min,Agent de santé,3,7,2026-10-10
+LEM-037,Madrandele,18–23 mois,Femme,Primaire,1,Influence familiale,Accepter avec hésitation,1,1,0,1,1,0,≥60 min,Agent de santé,2,6,2026-08-03
+LEM-279,Molo,12–17 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,1,0,15–29 min,Radio / TV,4,7,2026-09-22
+LEM-217,Gombele,6–11 mois,Femme,Secondaire,0,Aucune / non applicable,Retarder certains,0,0,0,1,1,0,15–29 min,Famille / amis,4,4,2026-08-27
+LEM-130,Molo,0–5 mois,Homme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,1,1,30–59 min,WhatsApp,4,7,2026-10-06
+LEM-240,Ecole,12–17 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,15–29 min,WhatsApp,4,7,2026-10-05
+LEM-021,Ecole,12–17 mois,Femme,Primaire,1,Peur des effets indésirables,Accepter avec hésitation,1,1,1,1,0,1,30–59 min,WhatsApp,4,5,2026-10-13
+LEM-124,Foire,6–11 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,1,30–59 min,Agent de santé,3,3,2026-08-07
+LEM-099,Plateau,0–5 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,1,0,30–59 min,Agent de santé,5,4,2026-08-07
+LEM-233,Foire,6–11 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,<15 min,Agent de santé,5,8,2026-09-06
+LEM-273,Salongo,6–11 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,1,0,≥60 min,WhatsApp,4,7,2026-08-29
+LEM-325,Madrandele,18–23 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,<15 min,Facebook / TikTok,5,8,2026-10-07
+LEM-228,Madrandele,6–11 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,15–29 min,Radio / TV,4,7,2026-08-17
+LEM-394,Echangeur,12–17 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter avec hésitation,0,0,0,1,1,0,15–29 min,WhatsApp,4,9,2026-08-25
+LEM-295,Masano,12–17 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,30–59 min,Agent de santé,3,10,2026-08-02
+LEM-333,Commercial,12–17 mois,Femme,Primaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,≥60 min,WhatsApp,4,8,2026-10-10
+LEM-367,Livulu,6–11 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,1,30–59 min,Radio / TV,2,8,2026-09-20
+LEM-259,Salongo,18–23 mois,Homme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,15–29 min,Famille / amis,3,6,2026-10-08
+LEM-232,Molo,18–23 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter avec hésitation,0,0,0,0,1,1,<15 min,Facebook / TikTok,5,8,2026-08-12
+LEM-015,Plateau,18–23 mois,Femme,Secondaire,1,Religion / croyance,Retarder certains,1,1,0,1,1,0,30–59 min,WhatsApp,3,4,2026-09-16
+LEM-403,Foire,12–17 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,30–59 min,WhatsApp,5,9,2026-09-22
+LEM-213,Mbanza Lemba,0–5 mois,Femme,Aucun,0,Aucune / non applicable,Accepter avec hésitation,0,0,0,1,0,0,15–29 min,Radio / TV,4,6,2026-10-14
+LEM-209,Madrandele,6–11 mois,Homme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,1,<15 min,Agent de santé,3,6,2026-08-03
+LEM-417,Mbanza Lemba,0–5 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,30–59 min,Famille / amis,3,5,2026-08-08
+LEM-089,Salongo,0–5 mois,Femme,Supérieur,1,Rumeur / désinformation,Refuser certains,1,0,0,0,1,1,15–29 min,Agent de santé,3,7,2026-08-03
+LEM-288,Kimpwanza,6–11 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,1,0,30–59 min,Agent de santé,3,6,2026-08-25
+LEM-205,Echangeur,6–11 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,1,15–29 min,Église,5,7,2026-09-01
+LEM-119,Salongo,0–5 mois,Homme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,30–59 min,Famille / amis,4,7,2026-09-14
+LEM-285,Madrandele,12–17 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,30–59 min,WhatsApp,4,6,2026-08-21
+LEM-377,Echangeur,0–5 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,0,<15 min,Agent de santé,3,9,2026-09-11
+LEM-176,Kemi,0–5 mois,Femme,Aucun,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,1,0,<15 min,Église,5,6,2026-09-27
+LEM-144,Ecole,0–5 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter avec hésitation,0,0,0,1,0,1,15–29 min,WhatsApp,3,6,2026-08-29
+LEM-002,Mbanza Lemba,0–5 mois,Femme,Secondaire,1,Influence familiale,Accepter sans hésiter,1,1,0,1,1,0,≥60 min,Facebook / TikTok,2,5,2026-08-17
+LEM-225,Gombele,18–23 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,30–59 min,Agent de santé,5,4,2026-09-01
+LEM-230,Commercial,6–11 mois,Femme,Secondaire,0,Aucune / non applicable,Retarder certains,0,0,0,0,1,0,<15 min,Agent de santé,3,7,2026-08-15
+LEM-166,Foire,12–17 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,0,15–29 min,WhatsApp,3,6,2026-10-09
+LEM-036,Madrandele,6–11 mois,Homme,Secondaire,1,Rumeur / désinformation,Accepter avec hésitation,1,1,0,1,1,1,30–59 min,Radio / TV,3,3,2026-10-07
+LEM-178,Madrandele,6–11 mois,Femme,Secondaire,0,Aucune / non applicable,Retarder certains,0,0,0,1,0,0,30–59 min,Agent de santé,3,9,2026-10-08
+LEM-035,Salongo,18–23 mois,Femme,Secondaire,1,Peur des effets indésirables,Accepter sans hésiter,1,0,0,0,0,0,30–59 min,Agent de santé,2,2,2026-09-23
+LEM-050,Kemi,0–5 mois,Femme,Supérieur,1,Rumeur / désinformation,Accepter avec hésitation,1,0,1,0,0,0,30–59 min,Radio / TV,3,5,2026-09-01
+LEM-174,Madrandele,12–17 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,1,0,<15 min,Agent de santé,4,5,2026-10-01
+LEM-041,Plateau,6–11 mois,Femme,Aucun,1,Peur des effets indésirables,Accepter avec hésitation,1,1,0,1,0,0,30–59 min,Agent de santé,3,4,2026-09-27
+LEM-008,Gombele,6–11 mois,Femme,Secondaire,1,Influence familiale,Retarder certains,1,0,0,1,0,0,<15 min,Radio / TV,3,7,2026-09-17
+LEM-207,Commercial,12–17 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,15–29 min,WhatsApp,4,10,2026-08-04
+LEM-199,Masano,6–11 mois,Femme,Primaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,15–29 min,WhatsApp,5,7,2026-08-30
+LEM-177,Madrandele,12–17 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,30–59 min,Radio / TV,4,9,2026-09-30
+LEM-298,Gombele,0–5 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,≥60 min,Radio / TV,4,7,2026-09-04
+LEM-218,Livulu,0–5 mois,Femme,Primaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,1,1,15–29 min,Radio / TV,4,5,2026-09-22
+LEM-062,Masano,12–17 mois,Femme,Secondaire,1,Religion / croyance,Accepter avec hésitation,1,0,1,1,0,0,≥60 min,Facebook / TikTok,3,4,2026-10-11
+LEM-387,Salongo,6–11 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,<15 min,WhatsApp,4,6,2026-08-14
+LEM-145,Echangeur,18–23 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,15–29 min,WhatsApp,4,6,2026-09-26
+LEM-400,Kimpwanza,0–5 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,0,≥60 min,Radio / TV,3,7,2026-10-12
+LEM-418,Foire,18–23 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,30–59 min,Agent de santé,3,8,2026-10-05
+LEM-300,Gombele,0–5 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter avec hésitation,0,0,0,0,0,0,≥60 min,Radio / TV,4,9,2026-08-28
+LEM-069,Commercial,6–11 mois,Femme,Primaire,1,Peur des effets indésirables,Accepter sans hésiter,1,1,0,0,0,0,15–29 min,Famille / amis,3,5,2026-09-24
+LEM-147,Kemi,18–23 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,0,30–59 min,Famille / amis,3,7,2026-10-13
+LEM-080,Echangeur,0–5 mois,Femme,Secondaire,1,Rumeur / désinformation,Accepter avec hésitation,1,0,0,1,0,0,30–59 min,Famille / amis,2,7,2026-09-24
+LEM-016,Molo,12–17 mois,Femme,Primaire,1,Peur des effets indésirables,Retarder certains,1,1,0,0,1,0,15–29 min,Agent de santé,5,5,2026-09-05
+LEM-419,Livulu,0–5 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,15–29 min,Agent de santé,4,8,2026-10-01
+LEM-222,Kemi,6–11 mois,Homme,Primaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,<15 min,Agent de santé,4,8,2026-10-02
+LEM-245,Foire,18–23 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,1,<15 min,Agent de santé,3,5,2026-08-29
+LEM-075,Plateau,18–23 mois,Femme,Secondaire,1,Méfiance envers les services,Accepter avec hésitation,1,1,0,1,0,0,30–59 min,WhatsApp,2,3,2026-08-01
+LEM-262,Livulu,12–17 mois,Femme,Primaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,<15 min,Agent de santé,3,6,2026-08-31
+LEM-375,Plateau,12–17 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,15–29 min,Agent de santé,3,5,2026-09-06
+LEM-137,Masano,0–5 mois,Homme,Primaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,30–59 min,WhatsApp,3,8,2026-09-01
+LEM-045,Plateau,6–11 mois,Femme,Secondaire,1,Peur des effets indésirables,Retarder certains,1,1,0,0,0,1,15–29 min,Radio / TV,3,7,2026-08-08
+LEM-409,Molo,6–11 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,15–29 min,Radio / TV,5,6,2026-10-13
+LEM-141,Mbanza Lemba,12–17 mois,Homme,Supérieur,0,Aucune / non applicable,Accepter avec hésitation,0,0,0,0,0,0,30–59 min,WhatsApp,5,7,2026-08-11
+LEM-098,Gombele,18–23 mois,Homme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,1,0,<15 min,Agent de santé,3,6,2026-09-18
+LEM-042,Mbanza Lemba,0–5 mois,Femme,Secondaire,1,Influence familiale,Accepter avec hésitation,1,0,0,1,1,0,30–59 min,Famille / amis,3,7,2026-10-09
+LEM-158,Gombele,6–11 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,1,30–59 min,Radio / TV,4,6,2026-09-30
+LEM-348,Molo,18–23 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,0,30–59 min,Agent de santé,5,10,2026-08-03
+LEM-261,Gombele,18–23 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,0,30–59 min,Église,4,5,2026-09-05
+LEM-385,Echangeur,18–23 mois,Femme,Primaire,0,Aucune / non applicable,Accepter avec hésitation,0,0,0,1,0,0,<15 min,Famille / amis,4,7,2026-08-01
+LEM-117,Echangeur,18–23 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,0,15–29 min,Agent de santé,3,8,2026-09-15
+LEM-260,Kimpwanza,12–17 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter avec hésitation,0,0,0,0,0,0,15–29 min,Facebook / TikTok,5,6,2026-08-02
+LEM-064,Masano,18–23 mois,Homme,Secondaire,1,Rumeur / désinformation,Accepter avec hésitation,1,1,1,0,1,0,30–59 min,WhatsApp,3,6,2026-08-05
+LEM-173,Gombele,6–11 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,1,1,30–59 min,Agent de santé,4,5,2026-09-23
+LEM-323,Salongo,0–5 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,1,0,30–59 min,Agent de santé,4,3,2026-09-19
+LEM-224,Foire,18–23 mois,Homme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,1,30–59 min,Agent de santé,3,5,2026-09-26
+LEM-113,Kimpwanza,6–11 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,15–29 min,Agent de santé,2,5,2026-09-13
+LEM-131,Gombele,0–5 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,≥60 min,WhatsApp,3,10,2026-08-26
+LEM-345,Livulu,6–11 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter avec hésitation,0,0,0,1,0,0,15–29 min,Église,3,5,2026-09-13
+LEM-190,Ecole,12–17 mois,Femme,Aucun,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,≥60 min,Agent de santé,5,5,2026-09-22
+LEM-311,Plateau,12–17 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,1,<15 min,Agent de santé,4,8,2026-10-05
+LEM-201,Molo,12–17 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,30–59 min,Radio / TV,3,5,2026-08-02
+LEM-299,Masano,12–17 mois,Homme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,≥60 min,WhatsApp,4,5,2026-08-07
+LEM-414,Livulu,12–17 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter avec hésitation,0,0,0,0,0,1,≥60 min,WhatsApp,3,7,2026-08-20
+LEM-104,Mbanza Lemba,18–23 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter avec hésitation,0,0,0,1,0,0,<15 min,Famille / amis,4,8,2026-09-04
+LEM-361,Kimpwanza,18–23 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,30–59 min,Famille / amis,5,10,2026-10-05
+LEM-043,Molo,6–11 mois,Femme,Primaire,1,Influence familiale,Refuser certains,1,1,1,1,1,0,30–59 min,WhatsApp,3,9,2026-09-21
+LEM-004,Commercial,12–17 mois,Femme,Supérieur,1,Doute sur l’efficacité,Accepter avec hésitation,1,1,1,1,1,0,<15 min,Facebook / TikTok,3,8,2026-08-02
+LEM-395,Foire,12–17 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,≥60 min,Radio / TV,4,7,2026-09-29
+LEM-239,Kimpwanza,18–23 mois,Femme,Primaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,15–29 min,Agent de santé,4,6,2026-10-08
+LEM-216,Masano,0–5 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,1,1,30–59 min,WhatsApp,3,4,2026-09-26
+LEM-334,Masano,6–11 mois,Homme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,15–29 min,Radio / TV,5,6,2026-08-06
+LEM-010,Mbanza Lemba,0–5 mois,Femme,Supérieur,1,Influence familiale,Accepter avec hésitation,1,0,0,0,1,1,<15 min,Radio / TV,2,7,2026-10-02
+LEM-044,Plateau,12–17 mois,Homme,Secondaire,1,Vaccination jugée non nécessaire,Retarder certains,1,1,0,0,0,0,15–29 min,Agent de santé,3,3,2026-09-20
+LEM-081,Salongo,0–5 mois,Femme,Secondaire,1,Expérience négative,Accepter avec hésitation,1,0,0,1,1,0,15–29 min,Radio / TV,3,5,2026-09-08
+LEM-312,Molo,12–17 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter avec hésitation,0,0,0,1,1,0,30–59 min,Radio / TV,3,3,2026-09-01
+LEM-252,Gombele,0–5 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,<15 min,Agent de santé,4,9,2026-08-19
+LEM-258,Masano,18–23 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,30–59 min,Agent de santé,4,9,2026-10-03
+LEM-320,Masano,0–5 mois,Femme,Primaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,0,30–59 min,Radio / TV,4,4,2026-08-16
+LEM-319,Madrandele,6–11 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,0,<15 min,Radio / TV,5,7,2026-09-06
+LEM-244,Madrandele,6–11 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,1,1,30–59 min,Agent de santé,3,8,2026-10-06
+LEM-343,Livulu,0–5 mois,Femme,Primaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,≥60 min,Agent de santé,4,6,2026-09-29
+LEM-126,Kemi,12–17 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter avec hésitation,0,0,0,0,0,1,30–59 min,Agent de santé,4,7,2026-09-25
+LEM-307,Echangeur,12–17 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,0,<15 min,Facebook / TikTok,4,4,2026-08-13
+LEM-148,Echangeur,12–17 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,1,0,≥60 min,Radio / TV,3,4,2026-09-25
+LEM-156,Commercial,6–11 mois,Femme,Primaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,1,0,30–59 min,Agent de santé,5,7,2026-10-14
+LEM-093,Gombele,18–23 mois,Femme,Secondaire,1,Rumeur / désinformation,Accepter avec hésitation,1,0,0,1,1,0,30–59 min,Agent de santé,2,5,2026-08-02
+LEM-194,Kemi,12–17 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter avec hésitation,0,0,0,0,0,0,30–59 min,Facebook / TikTok,3,7,2026-08-27
+LEM-264,Plateau,6–11 mois,Homme,Aucun,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,1,15–29 min,Agent de santé,5,8,2026-08-21
+LEM-326,Foire,0–5 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,30–59 min,Agent de santé,4,4,2026-10-09
+LEM-003,Foire,18–23 mois,Femme,Supérieur,1,Expérience négative,Accepter avec hésitation,1,0,0,1,0,1,<15 min,Radio / TV,5,10,2026-08-02
+LEM-051,Commercial,12–17 mois,Femme,Secondaire,1,Méfiance envers les services,Accepter avec hésitation,1,0,1,0,0,0,≥60 min,Famille / amis,3,4,2026-08-06
+LEM-337,Echangeur,6–11 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,15–29 min,Agent de santé,3,6,2026-08-06
+LEM-276,Masano,12–17 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,1,15–29 min,Agent de santé,4,8,2026-09-18
+LEM-296,Kemi,0–5 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,0,30–59 min,Radio / TV,4,5,2026-08-19
+LEM-318,Madrandele,12–17 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,<15 min,WhatsApp,5,8,2026-09-09
+LEM-091,Echangeur,0–5 mois,Homme,Secondaire,1,Autre,Retarder certains,1,1,0,1,1,0,30–59 min,Agent de santé,3,4,2026-09-25
+LEM-111,Mbanza Lemba,0–5 mois,Femme,Aucun,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,15–29 min,Agent de santé,3,6,2026-08-15
+LEM-227,Foire,6–11 mois,Femme,Primaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,30–59 min,Famille / amis,3,8,2026-09-16
+LEM-254,Commercial,12–17 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter avec hésitation,0,0,0,0,1,0,15–29 min,Agent de santé,4,3,2026-09-22
+LEM-267,Molo,18–23 mois,Femme,Secondaire,0,Aucune / non applicable,Retarder certains,0,0,0,1,0,1,≥60 min,Église,3,8,2026-09-16
+LEM-154,Kemi,18–23 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,≥60 min,WhatsApp,5,6,2026-10-09
+LEM-355,Gombele,18–23 mois,Autre / NSP,Secondaire,0,Aucune / non applicable,Accepter avec hésitation,0,0,0,1,0,0,≥60 min,Radio / TV,3,8,2026-10-15
+LEM-090,Commercial,0–5 mois,Femme,Secondaire,1,Autre,Accepter avec hésitation,1,0,0,0,1,1,30–59 min,WhatsApp,3,2,2026-08-18
+LEM-168,Madrandele,6–11 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,0,30–59 min,Facebook / TikTok,3,4,2026-08-07
+LEM-084,Foire,0–5 mois,Femme,Secondaire,1,Religion / croyance,Retarder certains,1,1,0,1,1,0,30–59 min,Agent de santé,3,5,2026-08-22
+LEM-321,Foire,6–11 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,1,0,15–29 min,Agent de santé,5,10,2026-09-07
+LEM-189,Masano,12–17 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,≥60 min,WhatsApp,3,7,2026-09-26
+LEM-335,Masano,6–11 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter avec hésitation,0,0,0,0,0,0,≥60 min,Agent de santé,5,6,2026-08-14
+LEM-389,Ecole,12–17 mois,Femme,Primaire,0,Aucune / non applicable,Retarder certains,0,0,0,0,0,1,15–29 min,WhatsApp,4,10,2026-08-05
+LEM-388,Echangeur,0–5 mois,Femme,Aucun,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,15–29 min,Agent de santé,3,7,2026-08-28
+LEM-118,Foire,12–17 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,1,15–29 min,Agent de santé,3,7,2026-09-03
+LEM-351,Salongo,6–11 mois,Homme,Primaire,0,Aucune / non applicable,Accepter avec hésitation,0,0,0,1,0,0,≥60 min,WhatsApp,4,6,2026-10-11
+LEM-242,Foire,6–11 mois,Femme,Aucun,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,1,15–29 min,WhatsApp,3,8,2026-08-01
+LEM-095,Kemi,0–5 mois,Femme,Secondaire,1,Doute sur l’efficacité,Accepter avec hésitation,1,1,0,1,0,0,15–29 min,Famille / amis,4,6,2026-10-03
+LEM-073,Echangeur,18–23 mois,Femme,Primaire,1,Peur des effets indésirables,Accepter avec hésitation,1,1,0,0,1,0,15–29 min,Famille / amis,3,5,2026-09-08
+LEM-079,Ecole,12–17 mois,Homme,Secondaire,1,Peur des effets indésirables,Accepter sans hésiter,1,1,0,1,1,0,30–59 min,Famille / amis,1,6,2026-08-19
+LEM-223,Masano,0–5 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter avec hésitation,0,0,0,0,0,0,15–29 min,Église,3,9,2026-08-10
+LEM-167,Mbanza Lemba,12–17 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,30–59 min,Agent de santé,5,7,2026-09-16
+LEM-136,Molo,18–23 mois,Homme,Aucun,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,15–29 min,Agent de santé,3,7,2026-10-03
+LEM-398,Livulu,12–17 mois,Autre / NSP,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,30–59 min,Famille / amis,3,10,2026-08-06
+LEM-152,Foire,12–17 mois,Autre / NSP,Aucun,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,15–29 min,Agent de santé,3,7,2026-08-03
+LEM-186,Kimpwanza,6–11 mois,Homme,Aucun,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,30–59 min,Facebook / TikTok,3,10,2026-08-16
+LEM-153,Ecole,12–17 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,1,30–59 min,Facebook / TikTok,5,6,2026-10-13
+LEM-100,Foire,0–5 mois,Homme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,1,<15 min,Famille / amis,4,5,2026-10-07
+LEM-282,Kimpwanza,6–11 mois,Femme,Supérieur,0,Aucune / non applicable,Retarder certains,0,0,0,1,0,1,30–59 min,Radio / TV,4,10,2026-08-27
+LEM-123,Mbanza Lemba,18–23 mois,Femme,Aucun,0,Aucune / non applicable,Accepter avec hésitation,0,0,0,0,0,0,<15 min,Facebook / TikTok,5,8,2026-10-14
+LEM-397,Foire,18–23 mois,Femme,Primaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,15–29 min,WhatsApp,2,10,2026-10-15
+LEM-150,Kemi,18–23 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,0,<15 min,Agent de santé,4,6,2026-09-18
+LEM-263,Commercial,18–23 mois,Femme,Primaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,1,30–59 min,Agent de santé,5,7,2026-09-15
+LEM-352,Commercial,0–5 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,15–29 min,Agent de santé,4,8,2026-08-27
+LEM-049,Livulu,6–11 mois,Femme,Supérieur,1,Doute sur l’efficacité,Accepter avec hésitation,1,1,0,1,1,1,30–59 min,Radio / TV,2,4,2026-10-13
+LEM-231,Plateau,12–17 mois,Femme,Primaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,30–59 min,Facebook / TikTok,5,7,2026-08-02
+LEM-086,Madrandele,0–5 mois,Homme,Secondaire,1,Autre,Retarder certains,1,1,1,1,1,0,15–29 min,WhatsApp,3,4,2026-08-23
+LEM-116,Commercial,0–5 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,0,30–59 min,Radio / TV,4,10,2026-09-23
+LEM-238,Madrandele,0–5 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,15–29 min,WhatsApp,3,8,2026-10-05
+LEM-022,Echangeur,12–17 mois,Homme,Secondaire,1,Expérience négative,Accepter avec hésitation,1,1,0,0,1,0,<15 min,Facebook / TikTok,2,3,2026-09-10
+LEM-413,Masano,6–11 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,≥60 min,Agent de santé,3,8,2026-09-09
+LEM-056,Kimpwanza,6–11 mois,Homme,Supérieur,1,Doute sur l’efficacité,Retarder certains,1,1,0,1,1,0,30–59 min,Agent de santé,3,6,2026-09-16
+LEM-061,Kemi,18–23 mois,Femme,Supérieur,1,Peur des effets indésirables,Retarder certains,1,1,0,1,1,0,<15 min,WhatsApp,2,3,2026-09-23
+LEM-210,Ecole,6–11 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,15–29 min,Agent de santé,4,5,2026-09-15
+LEM-243,Ecole,0–5 mois,Homme,Primaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,30–59 min,Agent de santé,4,8,2026-09-30
+LEM-172,Gombele,6–11 mois,Femme,Primaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,<15 min,Agent de santé,4,7,2026-09-12
+LEM-358,Kimpwanza,12–17 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,≥60 min,Agent de santé,5,7,2026-08-07
+LEM-410,Livulu,0–5 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,30–59 min,WhatsApp,3,8,2026-09-24
+LEM-128,Masano,18–23 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter avec hésitation,0,0,0,1,0,1,≥60 min,Agent de santé,5,7,2026-09-06
+LEM-229,Plateau,6–11 mois,Femme,Secondaire,0,Aucune / non applicable,Retarder certains,0,0,0,1,0,0,15–29 min,Agent de santé,5,6,2026-08-03
+LEM-284,Commercial,18–23 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,15–29 min,Facebook / TikTok,4,5,2026-08-04
+LEM-342,Plateau,18–23 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,1,30–59 min,Radio / TV,5,7,2026-09-19
+LEM-310,Livulu,0–5 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter avec hésitation,0,0,0,1,0,0,15–29 min,Église,3,10,2026-08-30
+LEM-236,Echangeur,18–23 mois,Homme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,15–29 min,Famille / amis,4,4,2026-10-04
+LEM-396,Molo,6–11 mois,Femme,Secondaire,0,Aucune / non applicable,Retarder certains,0,0,0,1,0,0,≥60 min,Radio / TV,5,6,2026-09-08
+LEM-408,Salongo,18–23 mois,Femme,Primaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,0,<15 min,Agent de santé,5,8,2026-08-06
+LEM-226,Gombele,12–17 mois,Femme,Aucun,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,0,15–29 min,WhatsApp,5,9,2026-09-17
+LEM-423,Ecole,6–11 mois,Homme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,30–59 min,Facebook / TikTok,4,8,2026-08-15
+LEM-076,Gombele,0–5 mois,Femme,Primaire,1,Peur des effets indésirables,Accepter avec hésitation,1,0,0,1,0,0,15–29 min,Facebook / TikTok,3,6,2026-09-21
+LEM-356,Salongo,6–11 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,15–29 min,Facebook / TikTok,3,10,2026-08-26
+LEM-007,Molo,18–23 mois,Femme,Secondaire,1,Peur des effets indésirables,Refuser certains,1,1,0,1,0,0,<15 min,WhatsApp,2,8,2026-09-12
+LEM-083,Gombele,0–5 mois,Homme,Supérieur,1,Vaccination jugée non nécessaire,Refuser certains,1,1,0,0,1,0,≥60 min,Radio / TV,3,5,2026-09-28
+LEM-020,Kimpwanza,12–17 mois,Femme,Supérieur,1,Rumeur / désinformation,Accepter avec hésitation,1,1,0,1,1,0,30–59 min,WhatsApp,3,3,2026-08-15
+LEM-405,Mbanza Lemba,18–23 mois,Femme,Primaire,0,Aucune / non applicable,Accepter avec hésitation,0,0,0,0,0,0,15–29 min,Agent de santé,4,8,2026-08-05
+LEM-165,Ecole,12–17 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,1,0,≥60 min,WhatsApp,4,3,2026-09-06
+LEM-088,Mbanza Lemba,12–17 mois,Femme,Supérieur,1,Méfiance envers les services,Retarder certains,1,1,1,0,1,0,15–29 min,Église,3,4,2026-10-04
+LEM-188,Foire,18–23 mois,Femme,Aucun,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,0,15–29 min,Agent de santé,4,9,2026-09-25
+LEM-354,Salongo,12–17 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,1,≥60 min,Agent de santé,4,5,2026-08-29
+LEM-107,Echangeur,6–11 mois,Femme,Aucun,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,30–59 min,Église,3,7,2026-10-08
+LEM-160,Plateau,18–23 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,0,15–29 min,Agent de santé,4,10,2026-08-24
+LEM-155,Mbanza Lemba,6–11 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,1,≥60 min,Église,4,3,2026-09-16
+LEM-171,Foire,18–23 mois,Femme,Primaire,0,Aucune / non applicable,Accepter avec hésitation,0,0,0,0,1,0,30–59 min,Facebook / TikTok,3,6,2026-09-17
+LEM-163,Salongo,6–11 mois,Femme,Primaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,1,0,30–59 min,Radio / TV,5,6,2026-08-11
+LEM-169,Madrandele,12–17 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,30–59 min,Église,4,9,2026-09-21
+LEM-053,Kimpwanza,6–11 mois,Femme,Secondaire,1,Influence familiale,Accepter avec hésitation,1,1,0,0,0,0,15–29 min,WhatsApp,2,4,2026-09-20
+LEM-346,Mbanza Lemba,0–5 mois,Femme,Primaire,0,Aucune / non applicable,Accepter avec hésitation,0,0,0,0,1,0,30–59 min,WhatsApp,5,6,2026-08-24
+LEM-313,Masano,18–23 mois,Femme,Primaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,1,0,30–59 min,Radio / TV,4,4,2026-08-19
+LEM-034,Echangeur,0–5 mois,Femme,Secondaire,1,Rumeur / désinformation,Accepter sans hésiter,1,0,0,1,1,0,15–29 min,Famille / amis,3,5,2026-09-16
+LEM-005,Foire,12–17 mois,Femme,Secondaire,1,Doute sur l’efficacité,Accepter avec hésitation,1,0,0,1,1,0,<15 min,Agent de santé,2,5,2026-10-15
+LEM-376,Masano,12–17 mois,Femme,Primaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,15–29 min,WhatsApp,4,7,2026-09-19
+LEM-026,Kemi,18–23 mois,Homme,Aucun,1,Rumeur / désinformation,Accepter avec hésitation,1,1,1,1,1,0,15–29 min,WhatsApp,3,4,2026-10-15
+LEM-048,Gombele,0–5 mois,Femme,Primaire,1,Peur des effets indésirables,Accepter avec hésitation,1,1,0,1,0,0,≥60 min,Radio / TV,2,4,2026-09-19
+LEM-357,Livulu,6–11 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,15–29 min,WhatsApp,4,7,2026-08-07
+LEM-204,Ecole,0–5 mois,Femme,Primaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,1,<15 min,Agent de santé,5,7,2026-10-06
+LEM-108,Plateau,0–5 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,1,0,30–59 min,Famille / amis,3,3,2026-09-21
+LEM-009,Livulu,12–17 mois,Femme,Secondaire,1,Rumeur / désinformation,Refuser certains,1,0,1,1,0,1,15–29 min,Agent de santé,4,5,2026-09-03
+LEM-268,Commercial,18–23 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter avec hésitation,0,0,0,1,1,0,30–59 min,Église,4,10,2026-09-06
+LEM-033,Kimpwanza,12–17 mois,Femme,Secondaire,1,Autre,Retarder certains,1,1,1,1,1,0,15–29 min,WhatsApp,3,7,2026-09-20
+LEM-001,Mbanza Lemba,6–11 mois,Femme,Supérieur,1,Rumeur / désinformation,Accepter avec hésitation,1,0,0,1,1,0,30–59 min,Famille / amis,5,5,2026-08-08
+LEM-324,Madrandele,18–23 mois,Femme,Primaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,30–59 min,WhatsApp,4,8,2026-08-08
+LEM-129,Livulu,12–17 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,0,15–29 min,Radio / TV,5,6,2026-09-29
+LEM-291,Madrandele,12–17 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,1,30–59 min,Agent de santé,4,7,2026-08-27
+LEM-096,Commercial,18–23 mois,Homme,Primaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,≥60 min,WhatsApp,4,7,2026-09-21
+LEM-183,Kimpwanza,0–5 mois,Femme,Supérieur,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,<15 min,Radio / TV,4,4,2026-08-21
+LEM-330,Kemi,0–5 mois,Femme,Primaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,1,0,<15 min,Radio / TV,4,4,2026-10-09
+LEM-308,Molo,6–11 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,1,<15 min,Facebook / TikTok,3,8,2026-09-27
+LEM-110,Madrandele,6–11 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,1,30–59 min,WhatsApp,3,10,2026-09-05
+LEM-371,Ecole,0–5 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,0,30–59 min,Église,4,9,2026-08-01
+LEM-378,Salongo,0–5 mois,Femme,Primaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,0,15–29 min,Agent de santé,4,9,2026-08-30
+LEM-271,Gombele,18–23 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,0,≥60 min,Radio / TV,4,4,2026-08-22
+LEM-272,Plateau,18–23 mois,Femme,Primaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,15–29 min,WhatsApp,5,8,2026-08-08
+LEM-336,Gombele,6–11 mois,Autre / NSP,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,0,30–59 min,Agent de santé,4,7,2026-09-18
+LEM-220,Salongo,6–11 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,1,30–59 min,Radio / TV,4,8,2026-09-16
+LEM-370,Mbanza Lemba,18–23 mois,Femme,Primaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,1,0,30–59 min,Radio / TV,3,7,2026-08-05
+LEM-281,Mbanza Lemba,18–23 mois,Femme,Primaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,1,30–59 min,Agent de santé,4,6,2026-09-04
+LEM-208,Masano,18–23 mois,Femme,Aucun,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,1,30–59 min,Agent de santé,2,8,2026-08-08
+LEM-019,Commercial,0–5 mois,Femme,Primaire,1,Rumeur / désinformation,Retarder certains,1,0,0,0,1,0,30–59 min,Église,3,5,2026-08-31
+LEM-030,Ecole,0–5 mois,Homme,Secondaire,1,Influence familiale,Retarder certains,1,1,1,0,1,0,≥60 min,Agent de santé,2,3,2026-08-17
+LEM-162,Molo,18–23 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,30–59 min,Radio / TV,4,9,2026-09-04
+LEM-341,Mbanza Lemba,0–5 mois,Femme,Primaire,0,Aucune / non applicable,Retarder certains,0,0,0,0,0,0,≥60 min,Agent de santé,4,8,2026-10-14
+LEM-274,Kimpwanza,18–23 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,1,0,<15 min,Agent de santé,3,7,2026-08-02
+LEM-353,Mbanza Lemba,12–17 mois,Femme,Secondaire,0,Aucune / non applicable,Retarder certains,0,0,0,1,1,0,15–29 min,WhatsApp,4,7,2026-10-07
+LEM-134,Masano,0–5 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,<15 min,Église,3,6,2026-09-20
+LEM-074,Mbanza Lemba,18–23 mois,Homme,Supérieur,1,Doute sur l’efficacité,Retarder certains,1,0,0,1,0,0,<15 min,Famille / amis,2,5,2026-09-14
+LEM-322,Livulu,18–23 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,30–59 min,Agent de santé,3,8,2026-10-01
+LEM-382,Echangeur,6–11 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,0,1,15–29 min,WhatsApp,4,8,2026-10-05
+LEM-121,Kemi,12–17 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,<15 min,Agent de santé,3,4,2026-09-30
+LEM-215,Ecole,0–5 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,30–59 min,Église,3,6,2026-08-05
+LEM-060,Molo,6–11 mois,Femme,Secondaire,1,Rumeur / désinformation,Accepter avec hésitation,1,0,1,0,1,0,30–59 min,Famille / amis,3,2,2026-08-12
+LEM-055,Molo,18–23 mois,Homme,Secondaire,1,Peur des effets indésirables,Accepter avec hésitation,1,1,1,0,1,1,<15 min,Famille / amis,3,5,2026-08-28
+LEM-135,Ecole,18–23 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,1,1,0,30–59 min,Facebook / TikTok,4,10,2026-08-17
+LEM-006,Molo,0–5 mois,Femme,Supérieur,1,Doute sur l’efficacité,Accepter avec hésitation,1,0,0,1,0,0,<15 min,Agent de santé,3,5,2026-08-24
+LEM-314,Gombele,18–23 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,1,0,15–29 min,Famille / amis,2,9,2026-08-21
+LEM-374,Ecole,0–5 mois,Femme,Supérieur,0,Aucune / non applicable,Retarder certains,0,0,0,1,0,0,30–59 min,WhatsApp,4,5,2026-10-10
+LEM-411,Foire,6–11 mois,Femme,Secondaire,0,Aucune / non applicable,Accepter sans hésiter,0,0,0,0,0,0,15–29 min,Agent de santé,3,9,2026-08-01
