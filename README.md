@@ -59,12 +59,21 @@ Pour tester immédiatement sans identifiants Kobo : dans la barre latérale, cho
 2. Ouvrez votre formulaire déployé et récupérez son **identifiant (asset UID)** dans l'URL
    du projet (ex. `https://kf.kobotoolbox.org/#/forms/aXXXXXXXXXXXXXXXXXXXXXX/...` → l'UID
    est la partie commençant par `a`).
-3. Deux façons de renseigner ces informations :
-   - **Temporairement**, directement dans la barre latérale de l'application (mode
-     « API KoboToolbox (live) »).
-   - **De façon permanente**, en créant un fichier `.streamlit/secrets.toml` à partir du
-     modèle `secrets.toml.example` fourni. **Ce fichier est volontairement exclu du dépôt
+3. **Ces identifiants ne se saisissent nulle part dans l'interface de l'application** —
+   volontairement : l'app, une fois déployée sur Streamlit Community Cloud, est
+   accessible par lien à quiconque l'a reçu, et un champ de saisie en clair aurait
+   permis à n'importe quel visiteur de lire ou de remplacer le jeton d'accès à la
+   vraie base de collecte. Ils se configurent uniquement côté administrateur :
+   - **En local**, créez un fichier `.streamlit/secrets.toml` à partir du modèle
+     `secrets.toml.example` fourni. **Ce fichier est volontairement exclu du dépôt
      Git (`.gitignore`) — ne le committez jamais.**
+   - **Sur Streamlit Community Cloud**, collez le même contenu dans *App settings >
+     Secrets* (voir §4b) — c'est l'équivalent cloud du fichier local, lui aussi privé
+     et invisible des visiteurs de l'app.
+
+   Tant qu'aucun des deux n'est configuré, le mode « API KoboToolbox (live) » affiche
+   un message d'attente et n'expose aucun champ de saisie ; seul le mode « Fichier
+   exporté » reste utilisable.
 
 4. Cliquez sur **« 🔄 Actualiser les données »** pour forcer un nouveau chargement
    (les données sont mises en cache 5 minutes par défaut).

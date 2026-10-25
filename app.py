@@ -34,6 +34,17 @@ from data_quality import (
 )
 from kobo_api import KoboAPIError, fetch_submissions
 
+
+def get_kobo_secrets() -> dict:
+    """Lit la section [kobo] des secrets Streamlit sans jamais lever d'exception,
+    y compris quand aucun fichier secrets.toml n'existe du tout (cas d'un premier
+    déploiement non encore configuré)."""
+    try:
+        return dict(st.secrets.get("kobo", {}))
+    except Exception:
+        return {}
+
+
 st.set_page_config(page_title="VaxSuivi-Lemba", page_icon="💉", layout="wide")
 
 st.markdown(
@@ -72,21 +83,16 @@ source_mode = st.sidebar.radio(
 df_raw = pd.DataFrame()
 
 if source_mode == "API KoboToolbox (live)":
-    st.sidebar.markdown(
-        "Renseignez vos identifiants Kobo, ou configurez-les une fois pour "
-        "toutes dans `.streamlit/secrets.toml` (voir le README)."
-    )
-    default_server = st.secrets.get("kobo", {}).get("server_url", "https://eu.kobotoolbox.org")
-    default_uid = st.secrets.get("kobo", {}).get("asset_uid", "")
-    default_token = st.secrets.get("kobo", {}).get("api_token", "")
-
-    server_url = st.sidebar.text_input(
-        "URL du serveur Kobo", value=default_server,
-        help="Vérifiez le serveur depuis l'URL de votre formulaire : eu.kobotoolbox.org, "
-             "kf.kobotoolbox.org, etc. Un mauvais serveur renvoie une erreur HTTP 404.",
-    )
-    asset_uid = st.sidebar.text_input("Identifiant du formulaire (asset UID)", value=default_uid)
-    api_token = st.sidebar.text_input("Jeton d'API", value=default_token, type="password")
+    # Le serveur, l'asset UID et le jeton d'API ne sont JAMAIS saisissables dans
+    # l'interface : n'importe qui ayant le lien de l'app (publique sur Streamlit
+    # Community Cloud) pourrait sinon lire ou remplacer le jeton d'accès à la
+    # vraie base de collecte. Ces trois valeurs ne viennent que des secrets
+    # configurés par l'administrateur (.streamlit/secrets.toml en local, ou
+    # "App settings > Secrets" sur Streamlit Cloud) — voir le README, §3.
+    kobo_secrets = get_kobo_secrets()
+    server_url = kobo_secrets.get("server_url", "")
+    asset_uid = kobo_secrets.get("asset_uid", "")
+    api_token = kobo_secrets.get("api_token", "")
 
     if st.sidebar.button("🔄 Actualiser les données", type="primary"):
         st.cache_data.clear()
@@ -95,16 +101,18 @@ if source_mode == "API KoboToolbox (live)":
     def _load_from_kobo(server_url, asset_uid, api_token):
         return fetch_submissions(server_url, asset_uid, api_token)
 
-    if asset_uid and api_token:
+    if server_url and asset_uid and api_token:
         try:
             df_raw = _load_from_kobo(server_url, asset_uid, api_token)
         except KoboAPIError as e:
             st.error(f"Impossible de récupérer les données Kobo : {e}")
     else:
         st.info(
-            "Renseignez l'identifiant du formulaire et le jeton d'API dans la "
-            "barre latérale (ou `.streamlit/secrets.toml`) pour charger les "
-            "soumissions en direct."
+            "La connexion Kobo n'est pas encore configurée pour cette application. "
+            "Un administrateur doit renseigner `server_url`, `asset_uid` et `api_token` "
+            "dans les secrets de l'app (voir le README, §3) — ces informations ne sont "
+            "volontairement pas saisissables ici, pour protéger l'accès à la vraie base "
+            "de collecte. En attendant, utilisez l'option « Fichier exporté » ci-dessus."
         )
 
 else:
@@ -236,7 +244,7 @@ with tab_overview:
             legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0),
         )
         theme.apply_layout(fig, height=360, show_legend=True)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True, key="chart_trend_global")
     else:
         st.info("Champ ID02 (date d'entretien) absent des données chargées.")
 
@@ -255,7 +263,7 @@ with tab_overview:
             ))
             fig.update_xaxes(title="Entretiens")
             theme.apply_layout(fig, height=420)
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, use_container_width=True, key="chart_overview_par_as")
         else:
             st.info("Champ ID04 (aire de santé) absent des données chargées.")
 
@@ -273,7 +281,7 @@ with tab_overview:
             ))
             fig.update_xaxes(title="Entretiens")
             theme.apply_layout(fig, height=420)
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, use_container_width=True, key="chart_overview_par_enq")
         else:
             st.info("Champ ID03 (code enquêteur) absent des données chargées.")
 
@@ -298,7 +306,7 @@ with tab_enq:
         fig.update_xaxes(title="Date", type="category")
         fig.update_yaxes(title="")
         theme.apply_layout(fig, height=120 + 28 * len(mat.columns))
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True, key="chart_heatmap_enq")
     else:
         st.info("Pas assez de données (ID02/ID03) pour tracer la tendance par enquêteur.")
 
@@ -325,7 +333,7 @@ with tab_as:
         ))
         fig.update_xaxes(title="Entretiens")
         theme.apply_layout(fig, height=420)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True, key="chart_detail_par_as")
     else:
         st.info("Aucune donnée à détailler pour la sélection actuelle.")
 
