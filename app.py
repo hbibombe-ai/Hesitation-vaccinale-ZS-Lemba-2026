@@ -11,8 +11,10 @@ collecte pendant le terrain (progression par aire de santé et par enquêteur,
 anomalies de saisie, durée des entretiens). Toute prévalence affichée est
 explicitement signalée comme provisoire.
 """
+import base64
 import io
 from datetime import date
+from pathlib import Path
 
 import pandas as pd
 import plotly.graph_objects as go
@@ -69,6 +71,28 @@ st.caption(
     "Suivi de la collecte — Hésitation vaccinale chez les parents/tuteurs "
     "d'enfants 0-23 mois, Zone de Santé de Lemba (Kinshasa, 2026)"
 )
+
+
+def render_hero_banner() -> None:
+    """Affiche l'illustration d'en-tête (SVG) encodée en base64, pour éviter
+    toute dépendance réseau externe : l'image reste 100 % autonome dans le
+    dépôt et s'affiche même sans connexion internet sur le poste client."""
+    svg_path = Path(__file__).parent / "assets" / "hero_hesitation.svg"
+    if not svg_path.exists():
+        return
+    svg_b64 = base64.b64encode(svg_path.read_bytes()).decode("utf-8")
+    st.markdown(
+        f"""
+        <div style="border-radius:18px; overflow:hidden; margin-bottom:0.6rem;
+                    border:1px solid {theme.GRIDLINE}; box-shadow:0 2px 10px rgba(11,11,11,0.06);">
+            <img src="data:image/svg+xml;base64,{svg_b64}" style="width:100%; display:block;" />
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+render_hero_banner()
 
 # ------------------------------------------------------------------
 # SOURCE DES DONNÉES
