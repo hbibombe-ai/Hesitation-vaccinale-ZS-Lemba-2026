@@ -15,9 +15,10 @@ import io
 from datetime import date
 
 import pandas as pd
-import plotly.express as px
+import plotly.graph_objects as go
 import streamlit as st
 
+import theme
 from data_quality import (
     AIRES_SANTE,
     ENQUETEURS,
@@ -27,13 +28,29 @@ from data_quality import (
     hesitation_prevalence,
     normalize_columns,
     quality_report,
+    submission_trend_matrix,
+    summary_by_aire,
+    summary_by_enqueteur,
 )
 from kobo_api import KoboAPIError, fetch_submissions
 
-st.set_page_config(
-    page_title="VaxSuivi-Lemba",
-    page_icon="💉",
-    layout="wide",
+st.set_page_config(page_title="VaxSuivi-Lemba", page_icon="💉", layout="wide")
+
+st.markdown(
+    f"""
+    <style>
+    .stApp {{ background-color: {theme.SURFACE}; }}
+    [data-testid="stMetric"] {{
+        background-color: #ffffff;
+        border: 1px solid {theme.GRIDLINE};
+        border-radius: 10px;
+        padding: 14px 16px 10px 16px;
+    }}
+    [data-testid="stMetricLabel"] {{ color: {theme.INK_SECONDARY}; }}
+    [data-testid="stMetricValue"] {{ color: {theme.INK_PRIMARY}; }}
+    </style>
+    """,
+    unsafe_allow_html=True,
 )
 
 st.title("💉 VaxSuivi-Lemba")
@@ -59,11 +76,15 @@ if source_mode == "API KoboToolbox (live)":
         "Renseignez vos identifiants Kobo, ou configurez-les une fois pour "
         "toutes dans `.streamlit/secrets.toml` (voir le README)."
     )
-    default_server = st.secrets.get("kobo", {}).get("server_url", "https://kf.kobotoolbox.org")
+    default_server = st.secrets.get("kobo", {}).get("server_url", "https://eu.kobotoolbox.org")
     default_uid = st.secrets.get("kobo", {}).get("asset_uid", "")
     default_token = st.secrets.get("kobo", {}).get("api_token", "")
 
-    server_url = st.sidebar.text_input("URL du serveur Kobo", value=default_server)
+    server_url = st.sidebar.text_input(
+        "URL du serveur Kobo", value=default_server,
+        help="Vérifiez le serveur depuis l'URL de votre formulaire : eu.kobotoolbox.org, "
+             "kf.kobotoolbox.org, etc. Un mauvais serveur renvoie une erreur HTTP 404.",
+    )
     asset_uid = st.sidebar.text_input("Identifiant du formulaire (asset UID)", value=default_uid)
     api_token = st.sidebar.text_input("Jeton d'API", value=default_token, type="password")
 
@@ -87,9 +108,7 @@ if source_mode == "API KoboToolbox (live)":
         )
 
 else:
-    uploaded = st.sidebar.file_uploader(
-        "Export Kobo (CSV ou XLSX)", type=["csv", "xlsx"]
-    )
+    uploaded = st.sidebar.file_uploader("Export Kobo (CSV ou XLSX)", type=["csv", "xlsx"])
     if uploaded is not None:
         if uploaded.name.endswith(".csv"):
             df_raw = pd.read_csv(uploaded)
@@ -112,16 +131,12 @@ st.sidebar.header("Filtres")
 
 aires_present = sorted(df["ID04"].dropna().unique().tolist()) if "ID04" in df.columns else []
 aires_sel = st.sidebar.multiselect(
-    "Aire de santé",
-    options=aires_present,
-    format_func=lambda x: AIRES_SANTE.get(x, x),
+    "Aire de santé", options=aires_present, format_func=lambda x: AIRES_SANTE.get(x, x),
 )
 
 enq_present = sorted(df["ID03"].dropna().unique().tolist()) if "ID03" in df.columns else []
 enq_sel = st.sidebar.multiselect(
-    "Enquêteur",
-    options=enq_present,
-    format_func=lambda x: ENQUETEURS.get(x, x),
+    "Enquêteur", options=enq_present, format_func=lambda x: ENQUETEURS.get(x, x),
 )
 
 date_min = date_max = None
@@ -130,10 +145,7 @@ if "ID02" in df.columns:
     if len(dates_valides):
         min_d, max_d = dates_valides.min().date(), dates_valides.max().date()
         date_min, date_max = st.sidebar.date_input(
-            "Période de collecte",
-            value=(min_d, max_d),
-            min_value=min_d,
-            max_value=max_d,
+            "Période de collecte", value=(min_d, max_d), min_value=min_d, max_value=max_d,
         )
 
 df_f = apply_filters(df, aires=aires_sel or None, enqueteurs=enq_sel or None,
@@ -146,143 +158,210 @@ echantillon_cible = st.sidebar.number_input(
          "pour afficher le taux d'avancement global.",
 )
 
-# ------------------------------------------------------------------
-# KPI PRINCIPAUX
-# ------------------------------------------------------------------
 qr = quality_report(df_f)
 elig = eligibility_rate(df_f)
 prevalence = hesitation_prevalence(df_f)
 
-col1, col2, col3, col4, col5 = st.columns(5)
+# ------------------------------------------------------------------
+# KPI PRINCIPAUX
+# ------------------------------------------------------------------
+col1, col2, col3, col4, col5, col6 = st.columns(6)
 col1.metric("Entretiens enregistrés", qr["n_total"])
 if echantillon_cible > 0:
     taux_avancement = round(qr["n_total"] / echantillon_cible * 100, 1)
     col2.metric("Avancement vs objectif", f"{taux_avancement} %", f"{qr['n_total']}/{echantillon_cible}")
 else:
     col2.metric("Avancement vs objectif", "—", help="Renseigner l'effectif cible dans la barre latérale")
-col3.metric("Taux éligibilité+consentement", f"{elig['taux_pct']} %" if elig["taux_pct"] is not None else "—")
-col4.metric("Doublons ménage potentiels", qr["doublons_menage"])
-col5.metric(
-    "Durée moyenne (min)",
-    qr["duree_moyenne_min"] if qr["duree_moyenne_min"] is not None else "—",
+col3.metric("Éligibilité + consentement", f"{elig['taux_pct']} %" if elig["taux_pct"] is not None else "—")
+col4.metric("Doublons potentiels", qr["doublons_menage"])
+col5.metric("Durée moyenne", f"{qr['duree_moyenne_min']} min" if qr["duree_moyenne_min"] is not None else "—")
+
+jours_depuis_dernier = None
+if "ID02" in df_f.columns and not df_f.empty:
+    dates_valides_f = pd.to_datetime(df_f["ID02"], errors="coerce").dropna()
+    if len(dates_valides_f):
+        jours_depuis_dernier = (pd.Timestamp(date.today()) - dates_valides_f.max()).days
+col6.metric(
+    "Jours depuis dernière soumission",
+    jours_depuis_dernier if jours_depuis_dernier is not None else "—",
 )
 
 if "N_FORMULAIRE" in df_f.columns and not df_f.empty:
     st.caption(
-        f"🔢 Numérotation séquentielle (formulaire = ménage) attribuée après "
-        f"centralisation des soumissions — dernier numéro en date : "
-        f"**N° {int(df['N_FORMULAIRE'].max())}** sur l'ensemble de la base "
-        f"(numéros recalculés à chaque actualisation ; voir §5 du README sur la "
-        f"différence avec le code unique généré sur le terrain par le formulaire Kobo)."
+        f"🔢 Numérotation séquentielle (formulaire = ménage) attribuée après centralisation des "
+        f"soumissions — dernier numéro en date : **N° {int(df['N_FORMULAIRE'].max())}** sur "
+        f"l'ensemble de la base (recalculée à chaque actualisation — voir §5 du README)."
     )
 
 if prevalence is not None:
     st.warning(
-        f"⚠️ Prévalence provisoire d'hésitation vaccinale sur les entretiens déjà "
-        f"saisis : **{prevalence} %**. Indicateur de suivi de terrain uniquement — "
-        f"**ne constitue pas un résultat scientifique du mémoire**. La règle de "
-        f"calcul de HESITATION et les scores composites (SCORE_CONNAISS, "
-        f"SCORE_CONFIANCE, etc.) restent à finaliser après le pré-test, conformément "
-        f"à l'Annexe 1 du questionnaire."
+        f"⚠️ Prévalence provisoire d'hésitation vaccinale sur les entretiens déjà saisis : "
+        f"**{prevalence} %**. Indicateur de suivi de terrain uniquement — **ne constitue pas un "
+        f"résultat scientifique du mémoire**. La règle de calcul de HESITATION et les scores "
+        f"composites (SCORE_CONNAISS, SCORE_CONFIANCE, etc.) restent à finaliser après le "
+        f"pré-test, conformément à l'Annexe 1 du questionnaire."
     )
 
 st.divider()
 
 # ------------------------------------------------------------------
-# PROGRESSION PAR AIRE DE SANTÉ / ENQUÊTEUR
+# ONGLETS
 # ------------------------------------------------------------------
-c1, c2 = st.columns(2)
+tab_overview, tab_enq, tab_as, tab_quality, tab_data = st.tabs(
+    ["📈 Vue d'ensemble", "🧑‍🤝‍🧑 Par enquêteur", "📍 Par aire de santé",
+     "✅ Qualité des données", "📋 Données brutes"]
+)
 
-with c1:
-    st.subheader("Entretiens par aire de santé")
-    if "ID04" in df_f.columns and not df_f.empty:
-        counts = df_f["ID04"].value_counts().rename_axis("ID04").reset_index(name="n")
-        counts["Aire de santé"] = counts["ID04"].map(AIRES_SANTE).fillna(counts["ID04"])
-        fig = px.bar(
-            counts.sort_values("n", ascending=True),
-            x="n", y="Aire de santé", orientation="h",
-            text="n", labels={"n": "Entretiens"},
+# --- Vue d'ensemble -------------------------------------------------
+with tab_overview:
+    st.subheader("Progression de la collecte dans le temps")
+    if "ID02" in df_f.columns and not df_f.empty:
+        tmp = df_f.copy()
+        tmp["ID02"] = pd.to_datetime(tmp["ID02"], errors="coerce")
+        daily = tmp.dropna(subset=["ID02"]).groupby(tmp["ID02"].dt.date).size().reset_index(name="n")
+        daily.columns = ["Date", "Entretiens"]
+        daily["Cumulé"] = daily["Entretiens"].cumsum()
+
+        fig = go.Figure()
+        fig.add_bar(x=daily["Date"], y=daily["Entretiens"], name="Entretiens / jour",
+                    marker_color=theme.ACCENT, marker_line_width=0,
+                    hovertemplate="%{x}<br>%{y} entretiens<extra></extra>")
+        fig.add_scatter(x=daily["Date"], y=daily["Cumulé"], name="Cumulé", mode="lines+markers",
+                         line=dict(color=theme.ACCENT_DARK, width=2),
+                         marker=dict(size=6), yaxis="y2",
+                         hovertemplate="%{x}<br>Cumulé : %{y}<extra></extra>")
+        fig.update_layout(
+            yaxis=dict(title="Entretiens / jour"),
+            yaxis2=dict(title="Cumulé", overlaying="y", side="right", showgrid=False),
+            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0),
         )
-        fig.update_layout(height=420, margin=dict(l=10, r=10, t=10, b=10))
+        theme.apply_layout(fig, height=360, show_legend=True)
         st.plotly_chart(fig, use_container_width=True)
     else:
-        st.info("Champ ID04 (aire de santé) absent des données chargées.")
+        st.info("Champ ID02 (date d'entretien) absent des données chargées.")
 
-with c2:
-    st.subheader("Entretiens par enquêteur")
-    if "ID03" in df_f.columns and not df_f.empty:
-        counts = df_f["ID03"].value_counts().rename_axis("ID03").reset_index(name="n")
-        counts["Enquêteur"] = counts["ID03"].map(ENQUETEURS).fillna(counts["ID03"])
-        fig = px.bar(
-            counts.sort_values("n", ascending=True),
-            x="n", y="Enquêteur", orientation="h",
-            text="n", labels={"n": "Entretiens"},
+    c1, c2 = st.columns(2)
+    with c1:
+        st.subheader("Entretiens par aire de santé")
+        if "ID04" in df_f.columns and not df_f.empty:
+            counts = df_f["ID04"].value_counts().rename_axis("ID04").reset_index(name="n")
+            counts["Aire de santé"] = counts["ID04"].map(AIRES_SANTE).fillna(counts["ID04"])
+            counts = counts.sort_values("n", ascending=True)
+            fig = go.Figure(go.Bar(
+                x=counts["n"], y=counts["Aire de santé"], orientation="h",
+                text=counts["n"], textposition="outside",
+                marker_color=theme.ACCENT, marker_line_width=0,
+                hovertemplate="%{y} : %{x} entretiens<extra></extra>",
+            ))
+            fig.update_xaxes(title="Entretiens")
+            theme.apply_layout(fig, height=420)
+            st.plotly_chart(fig, use_container_width=True)
+        else:
+            st.info("Champ ID04 (aire de santé) absent des données chargées.")
+
+    with c2:
+        st.subheader("Entretiens par enquêteur")
+        if "ID03" in df_f.columns and not df_f.empty:
+            counts = df_f["ID03"].value_counts().rename_axis("ID03").reset_index(name="n")
+            counts["Enquêteur"] = counts["ID03"].map(ENQUETEURS).fillna(counts["ID03"])
+            counts = counts.sort_values("n", ascending=True)
+            fig = go.Figure(go.Bar(
+                x=counts["n"], y=counts["Enquêteur"], orientation="h",
+                text=counts["n"], textposition="outside",
+                marker_color=theme.ACCENT, marker_line_width=0,
+                hovertemplate="%{y} : %{x} entretiens<extra></extra>",
+            ))
+            fig.update_xaxes(title="Entretiens")
+            theme.apply_layout(fig, height=420)
+            st.plotly_chart(fig, use_container_width=True)
+        else:
+            st.info("Champ ID03 (code enquêteur) absent des données chargées.")
+
+# --- Par enquêteur ----------------------------------------------------
+with tab_enq:
+    st.subheader("Tendance des soumissions par enquêteur")
+    mat = submission_trend_matrix(df_f)
+    if not mat.empty:
+        st.caption(
+            "Chaque case indique le nombre d'entretiens soumis par cet enquêteur ce jour-là — "
+            "lecture rapide des jours actifs, des écarts et des ruptures de rythme par personne."
         )
-        fig.update_layout(height=420, margin=dict(l=10, r=10, t=10, b=10))
+        fig = go.Figure(go.Heatmap(
+            z=mat.values.T,
+            x=[d.isoformat() for d in mat.index],
+            y=mat.columns.tolist(),
+            colorscale=theme.blue_colorscale(),
+            colorbar=dict(title="Entretiens", outlinewidth=0),
+            hovertemplate="%{y} — %{x}<br>%{z} entretien(s)<extra></extra>",
+            xgap=2, ygap=2,
+        ))
+        fig.update_xaxes(title="Date", type="category")
+        fig.update_yaxes(title="")
+        theme.apply_layout(fig, height=120 + 28 * len(mat.columns))
         st.plotly_chart(fig, use_container_width=True)
     else:
-        st.info("Champ ID03 (code enquêteur) absent des données chargées.")
+        st.info("Pas assez de données (ID02/ID03) pour tracer la tendance par enquêteur.")
 
-# ------------------------------------------------------------------
-# PROGRESSION DANS LE TEMPS
-# ------------------------------------------------------------------
-st.subheader("Progression de la collecte dans le temps")
-if "ID02" in df_f.columns and not df_f.empty:
-    tmp = df_f.copy()
-    tmp["ID02"] = pd.to_datetime(tmp["ID02"], errors="coerce")
-    daily = tmp.dropna(subset=["ID02"]).groupby(tmp["ID02"].dt.date).size().reset_index(name="n")
-    daily.columns = ["Date", "Entretiens"]
-    daily["Cumulé"] = daily["Entretiens"].cumsum()
-    fig = px.bar(daily, x="Date", y="Entretiens")
-    fig2 = px.line(daily, x="Date", y="Cumulé")
-    fig.add_scatter(x=daily["Date"], y=daily["Cumulé"], name="Cumulé", yaxis="y2", mode="lines+markers")
-    fig.update_layout(
-        yaxis2=dict(overlaying="y", side="right", title="Cumulé"),
-        height=380, margin=dict(l=10, r=10, t=10, b=10),
-    )
-    st.plotly_chart(fig, use_container_width=True)
-else:
-    st.info("Champ ID02 (date d'entretien) absent des données chargées.")
-
-st.divider()
-
-# ------------------------------------------------------------------
-# QUALITÉ DES DONNÉES
-# ------------------------------------------------------------------
-st.subheader("Qualité des données")
-qc1, qc2 = st.columns(2)
-
-with qc1:
-    st.markdown("**Valeurs manquantes sur les champs clés (%)**")
-    if qr["missing_by_field"]:
-        miss_df = pd.DataFrame(
-            list(qr["missing_by_field"].items()), columns=["Champ", "% manquant"]
-        )
-        st.dataframe(miss_df, hide_index=True, use_container_width=True)
+    st.subheader("Détail par enquêteur")
+    detail_enq = summary_by_enqueteur(df_f)
+    if not detail_enq.empty:
+        st.dataframe(detail_enq, hide_index=True, use_container_width=True)
     else:
-        st.info("Champs clés non trouvés dans l'export.")
+        st.info("Aucune donnée à détailler pour la sélection actuelle.")
 
-with qc2:
-    st.markdown("**Alertes de terrain**")
-    alerts = []
-    if qr["doublons_menage"]:
-        alerts.append(f"🔴 {qr['doublons_menage']} doublon(s) potentiel(s) de ménage (même aire + quartier + repère enfant).")
-    if qr["entretiens_courts_lt5min"]:
-        alerts.append(f"🟠 {qr['entretiens_courts_lt5min']} entretien(s) de moins de 5 minutes — à vérifier.")
-    if elig.get("taux_pct") is not None and elig["taux_pct"] < 50:
-        alerts.append(f"🟠 Taux d'éligibilité/consentement faible ({elig['taux_pct']} %) — vérifier le recrutement sur le terrain.")
-    if not alerts:
-        st.success("Aucune alerte détectée sur les critères surveillés.")
+# --- Par aire de santé --------------------------------------------------
+with tab_as:
+    st.subheader("Détail par aire de santé")
+    detail_as = summary_by_aire(df_f)
+    if not detail_as.empty:
+        st.dataframe(detail_as, hide_index=True, use_container_width=True)
+
+        fig = go.Figure(go.Bar(
+            x=detail_as.sort_values("Entretiens")["Entretiens"],
+            y=detail_as.sort_values("Entretiens")["Aire de santé"],
+            orientation="h", text=detail_as.sort_values("Entretiens")["Entretiens"],
+            textposition="outside", marker_color=theme.ACCENT, marker_line_width=0,
+            hovertemplate="%{y} : %{x} entretiens<extra></extra>",
+        ))
+        fig.update_xaxes(title="Entretiens")
+        theme.apply_layout(fig, height=420)
+        st.plotly_chart(fig, use_container_width=True)
     else:
-        for a in alerts:
-            st.write(a)
+        st.info("Aucune donnée à détailler pour la sélection actuelle.")
 
-st.divider()
+# --- Qualité des données --------------------------------------------
+with tab_quality:
+    st.subheader("Qualité des données")
+    qc1, qc2 = st.columns(2)
 
-# ------------------------------------------------------------------
-# DONNÉES BRUTES / EXPORT
-# ------------------------------------------------------------------
-with st.expander("Voir / exporter les données filtrées"):
+    with qc1:
+        st.markdown("**Valeurs manquantes sur les champs clés (%)**")
+        if qr["missing_by_field"]:
+            miss_df = pd.DataFrame(list(qr["missing_by_field"].items()), columns=["Champ", "% manquant"])
+            st.dataframe(miss_df, hide_index=True, use_container_width=True)
+        else:
+            st.info("Champs clés non trouvés dans l'export.")
+
+    with qc2:
+        st.markdown("**Alertes de terrain**")
+        alerts = []
+        if qr["doublons_menage"]:
+            alerts.append(f"🔴 {qr['doublons_menage']} doublon(s) potentiel(s) de ménage (même aire + quartier + repère enfant).")
+        if qr["entretiens_courts_lt5min"]:
+            alerts.append(f"🟠 {qr['entretiens_courts_lt5min']} entretien(s) de moins de 5 minutes — à vérifier.")
+        if elig.get("taux_pct") is not None and elig["taux_pct"] < 50:
+            alerts.append(f"🟠 Taux d'éligibilité/consentement faible ({elig['taux_pct']} %) — vérifier le recrutement sur le terrain.")
+        if jours_depuis_dernier is not None and jours_depuis_dernier >= 3:
+            alerts.append(f"🟠 Aucune soumission depuis {jours_depuis_dernier} jours — vérifier que la collecte est toujours active.")
+        if not alerts:
+            st.success("Aucune alerte détectée sur les critères surveillés.")
+        else:
+            for a in alerts:
+                st.write(a)
+
+# --- Données brutes / export -----------------------------------------
+with tab_data:
+    st.subheader("Données filtrées")
     num_cols = [c for c in ["N_FORMULAIRE", "N_MENAGE", "N_DANS_AIRE", "N_DANS_ENQUETEUR"] if c in df_f.columns]
     autres_cols = [c for c in df_f.columns if c not in num_cols]
     df_export = df_f[num_cols + autres_cols]

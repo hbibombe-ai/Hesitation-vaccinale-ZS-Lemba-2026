@@ -20,7 +20,7 @@ AIRES_SANTE = {
 ENQUETEURS = {
     "ENQ01": "Gabriel", "ENQ02": "Edson", "ENQ03": "Richard", "ENQ04": "Dan",
     "ENQ05": "Germain", "ENQ06": "Ange", "ENQ07": "Benjamin", "ENQ08": "Eliezer",
-    "ENQ09": "Azaria", "ENQ10": "Levi",
+    "ENQ09": "Azaria", "ENQ10": "Evariste",
 }
 
 # Colonnes clés attendues, avec leur nom "groupé" possible tel qu'exporté par Kobo
@@ -169,6 +169,83 @@ def hesitation_prevalence(df: pd.DataFrame) -> float | None:
     if len(vals) == 0:
         return None
     return round(vals.mean() * 100, 1)
+
+
+def submission_trend_matrix(df: pd.DataFrame) -> pd.DataFrame:
+    """Matrice jour × enquêteur du nombre de soumissions, pour la heatmap de
+    tendance. Index = dates (ordre chronologique), colonnes = noms d'enquêteurs."""
+    if df.empty or "ID02" not in df.columns or "ID03" not in df.columns:
+        return pd.DataFrame()
+    tmp = df.copy()
+    tmp["ID02"] = pd.to_datetime(tmp["ID02"], errors="coerce")
+    tmp = tmp.dropna(subset=["ID02"])
+    if tmp.empty:
+        return pd.DataFrame()
+    tmp["Enquêteur"] = tmp["ID03"].map(ENQUETEURS).fillna(tmp["ID03"])
+    tmp["Jour"] = tmp["ID02"].dt.date
+    mat = tmp.pivot_table(index="Jour", columns="Enquêteur", values="ID02", aggfunc="count", fill_value=0)
+    mat = mat.sort_index()
+    return mat
+
+
+def summary_by_enqueteur(df: pd.DataFrame) -> pd.DataFrame:
+    """Tableau de détail par enquêteur : volume, part du total, durée moyenne,
+    taux d'éligibilité, dernière date active."""
+    if df.empty or "ID03" not in df.columns:
+        return pd.DataFrame()
+    tmp = df.copy()
+    tmp["Enquêteur"] = tmp["ID03"].map(ENQUETEURS).fillna(tmp["ID03"])
+    if "ID02" in tmp.columns:
+        tmp["ID02"] = pd.to_datetime(tmp["ID02"], errors="coerce")
+
+    rows = []
+    for enq, sub in tmp.groupby("Enquêteur"):
+        row = {
+            "Enquêteur": enq,
+            "Entretiens": len(sub),
+            "Part (%)": round(len(sub) / len(tmp) * 100, 1) if len(tmp) else 0,
+        }
+        duree_col = _find_col(sub, "DUREE_MIN")
+        if duree_col:
+            d = pd.to_numeric(sub[duree_col], errors="coerce").dropna()
+            row["Durée moy. (min)"] = round(d.mean(), 1) if len(d) else None
+        elig = eligibility_rate(sub)
+        row["Éligibilité (%)"] = elig["taux_pct"]
+        if "ID02" in sub.columns and sub["ID02"].notna().any():
+            row["Dernière activité"] = sub["ID02"].max().date().isoformat()
+            jours_actifs = sub["ID02"].dt.date.nunique()
+            row["Moy. / jour actif"] = round(len(sub) / jours_actifs, 1) if jours_actifs else None
+        rows.append(row)
+
+    out = pd.DataFrame(rows).sort_values("Entretiens", ascending=False).reset_index(drop=True)
+    return out
+
+
+def summary_by_aire(df: pd.DataFrame) -> pd.DataFrame:
+    """Tableau de détail par aire de santé : volume, part du total, durée moyenne,
+    taux d'éligibilité."""
+    if df.empty or "ID04" not in df.columns:
+        return pd.DataFrame()
+    tmp = df.copy()
+    tmp["Aire de santé"] = tmp["ID04"].map(AIRES_SANTE).fillna(tmp["ID04"])
+
+    rows = []
+    for aire, sub in tmp.groupby("Aire de santé"):
+        row = {
+            "Aire de santé": aire,
+            "Entretiens": len(sub),
+            "Part (%)": round(len(sub) / len(tmp) * 100, 1) if len(tmp) else 0,
+        }
+        duree_col = _find_col(sub, "DUREE_MIN")
+        if duree_col:
+            d = pd.to_numeric(sub[duree_col], errors="coerce").dropna()
+            row["Durée moy. (min)"] = round(d.mean(), 1) if len(d) else None
+        elig = eligibility_rate(sub)
+        row["Éligibilité (%)"] = elig["taux_pct"]
+        rows.append(row)
+
+    out = pd.DataFrame(rows).sort_values("Entretiens", ascending=False).reset_index(drop=True)
+    return out
 
 
 def eligibility_rate(df: pd.DataFrame) -> dict:

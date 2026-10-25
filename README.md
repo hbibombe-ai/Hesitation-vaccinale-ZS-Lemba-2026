@@ -5,6 +5,13 @@ Tableau de bord de suivi de la collecte de données (Streamlit) pour le mémoire
 > *Facteurs associés à l'hésitation vaccinale chez les parents ou tuteurs d'enfants de
 > 0 à 23 mois en vaccination de routine — Zone de Santé de Lemba, Kinshasa (RDC), 2026*
 
+**Organisation du tableau de bord :** KPI principaux en tête (dont le nombre de jours
+depuis la dernière soumission, utile pour repérer une interruption de terrain), puis cinq
+onglets — *Vue d'ensemble* (tendance cumulée, volumes par aire/enquêteur), *Par
+enquêteur* (heatmap jour × enquêteur + tableau détaillé : volume, part, durée moyenne,
+éligibilité, dernière activité), *Par aire de santé* (même détail par AS), *Qualité des
+données* et *Données brutes / export*.
+
 **Ce que fait l'outil :** suivre l'avancement du terrain (nombre d'entretiens par aire
 de santé et par enquêteur, progression dans le temps), détecter d'éventuelles anomalies
 de saisie (doublons de ménage, entretiens trop courts, champs manquants) et afficher une
