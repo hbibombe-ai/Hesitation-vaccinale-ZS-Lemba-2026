@@ -1,177 +1,142 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" role="img" aria-label="Illustration : une mère tient son bébé enveloppé dans un pagne coloré pendant qu'une infirmière lui administre le vaccin, dans une salle de consultation">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 420" role="img" aria-label="Illustration : un parent hésite entre OUI et NON face à la vaccination de son enfant, pendant qu'un agent de santé lui tend une seringue">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="0.3" y2="1">
-      <stop offset="0" stop-color="#b8c4a7"/>
-      <stop offset="1" stop-color="#93a37f"/>
+    <linearGradient id="bgLeft" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fdece0"/>
+      <stop offset="1" stop-color="#fbdcc6"/>
     </linearGradient>
-    <radialGradient id="skinMom" cx="0.38" cy="0.3" r="0.85">
-      <stop offset="0" stop-color="#6b4226"/>
-      <stop offset="0.6" stop-color="#5a3620"/>
-      <stop offset="1" stop-color="#43271757"/>
-    </radialGradient>
-    <radialGradient id="skinMom2" cx="0.38" cy="0.3" r="0.85">
-      <stop offset="0" stop-color="#6e4428"/>
-      <stop offset="0.65" stop-color="#5c3821"/>
-      <stop offset="1" stop-color="#432717"/>
-    </radialGradient>
-    <radialGradient id="skinBaby" cx="0.38" cy="0.3" r="0.85">
-      <stop offset="0" stop-color="#7a4c2c"/>
-      <stop offset="0.65" stop-color="#66401f"/>
-      <stop offset="1" stop-color="#4c2f16"/>
-    </radialGradient>
-    <radialGradient id="skinNurse" cx="0.38" cy="0.3" r="0.85">
-      <stop offset="0" stop-color="#603a21"/>
-      <stop offset="0.65" stop-color="#4e2f1b"/>
-      <stop offset="1" stop-color="#392112"/>
-    </radialGradient>
-    <linearGradient id="hair" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#1c130c"/>
-      <stop offset="1" stop-color="#0c0805"/>
+    <linearGradient id="bgRight" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#dcedfb"/>
+      <stop offset="1" stop-color="#c7e2f8"/>
     </linearGradient>
-    <linearGradient id="dress" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#f6f1e6"/>
-      <stop offset="1" stop-color="#e9e0cc"/>
+    <linearGradient id="syringeBody" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#dbe9fa"/>
     </linearGradient>
-    <linearGradient id="scrub" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#9fc9e8"/>
-      <stop offset="1" stop-color="#6ea7d1"/>
-    </linearGradient>
-    <pattern id="wax" width="46" height="46" patternUnits="userSpaceOnUse" patternTransform="rotate(8)">
-      <rect width="46" height="46" fill="#c9531f"/>
-      <circle cx="11.5" cy="11.5" r="9" fill="#1c5cab"/>
-      <circle cx="11.5" cy="11.5" r="4.2" fill="#f3b23a"/>
-      <circle cx="34.5" cy="34.5" r="9" fill="#1c5cab"/>
-      <circle cx="34.5" cy="34.5" r="4.2" fill="#f3b23a"/>
-      <circle cx="34.5" cy="11.5" r="4.5" fill="#f3b23a" opacity="0.85"/>
-      <circle cx="11.5" cy="34.5" r="4.5" fill="#f3b23a" opacity="0.85"/>
-    </pattern>
-    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
-      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#0b0b0b" flood-opacity="0.22"/>
-    </filter>
     <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#0b0b0b" flood-opacity="0.18"/>
+      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#0b0b0b" flood-opacity="0.12"/>
     </filter>
   </defs>
 
-  <!-- fond : mur sobre, lumière douce -->
-  <rect x="0" y="0" width="1200" height="520" rx="26" fill="url(#bg)"/>
-  <rect x="0" y="420" width="1200" height="100" rx="26" fill="#7c8c69"/>
-  <rect x="0" y="420" width="1200" height="14" fill="#0b0b0b" opacity="0.08"/>
-  <circle cx="1120" cy="90" r="150" fill="#ffffff" opacity="0.05"/>
-  <circle cx="70" cy="420" r="120" fill="#000000" opacity="0.04"/>
+  <!-- ===================== FOND SCINDÉ : doute (gauche, chaud) / confiance (droite, froid) ===================== -->
+  <rect x="0" y="0" width="1200" height="420" rx="28" fill="#fbdcc6"/>
+  <path d="M0 0 H640 L560 420 H0 Z" fill="url(#bgLeft)"/>
+  <path d="M640 0 H1200 V420 H560 Z" fill="url(#bgRight)"/>
+  <circle cx="90" cy="70" r="90" fill="#ec835a" opacity="0.10"/>
+  <circle cx="1140" cy="360" r="130" fill="#2a78d6" opacity="0.10"/>
 
-  <!-- ===== MÈRE, ASSISE, PORTANT LE BÉBÉ ===== -->
-  <g filter="url(#shadow)">
-    <ellipse cx="420" cy="500" rx="230" ry="16" fill="#0b0b0b" opacity="0.14"/>
+  <!-- gros points d'interrogation décoratifs, flottants -->
+  <g font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-weight="800" fill="#d98a52" opacity="0.5">
+    <text x="60" y="190" font-size="46" transform="rotate(-10 60 190)">?</text>
+    <text x="150" y="330" font-size="30" transform="rotate(8 150 330)">?</text>
+  </g>
+  <g font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-weight="800" fill="#4f93e0" opacity="0.5">
+    <text x="1110" y="150" font-size="40" transform="rotate(9 1110 150)">?</text>
+    <text x="1030" y="60" font-size="26" transform="rotate(-6 1030 60)">?</text>
+  </g>
 
-    <!-- robe, drapée -->
-    <path d="M300 500 C292 390 330 320 420 318 C512 320 548 392 540 500 Z" fill="url(#dress)"/>
-    <path d="M330 340 Q420 368 510 342 L540 500 L498 500 Q488 410 455 360 Z" fill="#000000" opacity="0.045"/>
-    <g fill="#c9a86a" opacity="0.4">
-      <circle cx="350" cy="400" r="3"/><circle cx="380" cy="430" r="3"/><circle cx="410" cy="395" r="3"/>
-      <circle cx="450" cy="420" r="3"/><circle cx="480" cy="450" r="3"/><circle cx="360" cy="460" r="3"/>
-      <circle cx="430" cy="470" r="3"/><circle cx="500" cy="400" r="3"/>
-    </g>
-    <path d="M360 330 Q420 352 480 330 L480 318 Q420 338 360 318 Z" fill="#dcd0b2"/>
+  <!-- ===================== MOTS OUI / NON, grand format, en arrière-plan ===================== -->
+  <text x="40" y="100" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="74" font-weight="900"
+        fill="#c75a2e" opacity="0.22" letter-spacing="2">NON&#160;?</text>
+  <text x="870" y="100" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="74" font-weight="900"
+        fill="#1c5cab" opacity="0.22" letter-spacing="2">OUI&#160;?</text>
 
-    <!-- bras gauche, soutenant le bébé -->
-    <path d="M330 368 Q288 398 302 452" stroke="url(#dress)" stroke-width="30" fill="none" stroke-linecap="round"/>
-    <!-- bras droit, tenant doucement le bébé -->
-    <path d="M500 368 Q548 392 538 440" stroke="url(#dress)" stroke-width="28" fill="none" stroke-linecap="round"/>
+  <!-- sol -->
+  <rect x="60" y="372" width="1080" height="10" rx="5" fill="#8a8678" opacity="0.28"/>
 
-    <!-- cou -->
-    <rect x="398" y="302" width="34" height="28" fill="#5c3821"/>
+  <!-- ===================== PARENT + BÉBÉ (gauche, zone du doute) ===================== -->
+  <g filter="url(#soft)">
+    <!-- tabouret -->
+    <rect x="150" y="338" width="150" height="16" rx="8" fill="#c3a98e" opacity="0.55"/>
+    <rect x="180" y="354" width="16" height="22" fill="#c3a98e" opacity="0.55"/>
+    <rect x="254" y="354" width="16" height="22" fill="#c3a98e" opacity="0.55"/>
+
+    <!-- corps du parent -->
+    <path d="M165 370 C160 265 182 212 258 212 C336 212 356 265 351 370 Z" fill="#ec835a"/>
+    <path d="M226 222 Q258 243 290 222 L290 212 Q258 228 226 212 Z" fill="#c75a2e"/>
+
+    <!-- bras gauche, enveloppant l'enfant -->
+    <path d="M192 252 Q150 280 176 328" stroke="#ec835a" stroke-width="28" fill="none" stroke-linecap="round"/>
+
+    <!-- bras droit : geste hésitant, paume levée, bien visible -->
+    <path d="M310 246 Q368 222 362 168" stroke="#ec835a" stroke-width="26" fill="none" stroke-linecap="round"/>
+    <circle cx="364" cy="156" r="19" fill="#f0c9a0"/>
+    <path d="M349 142 l-5 -15 M362 138 l0 -16 M375 141 l5 -15" stroke="#f0c9a0" stroke-width="6" stroke-linecap="round"/>
+
+    <!-- tête du parent -->
+    <circle cx="258" cy="168" r="50" fill="#f0c9a0"/>
+    <path d="M209 161 Q212 110 258 108 Q304 110 307 161 Q304 133 258 131 Q212 133 209 161 Z" fill="#3a2a1a"/>
+    <path d="M234 162 q11 -9 22 -2 M260 160 q11 -7 22 2" stroke="#3a2a1a" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+    <circle cx="243" cy="173" r="4.5" fill="#3a2a1a"/>
+    <circle cx="275" cy="173" r="4.5" fill="#3a2a1a"/>
+    <path d="M242 199 q16 -6 32 0" stroke="#8a5a3a" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+
+    <!-- bulle de doute au-dessus de la tête -->
+    <circle cx="320" cy="92" r="24" fill="#ffffff" stroke="#d98a52" stroke-width="2.5"/>
+    <text x="320" y="101" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="26" font-weight="800" fill="#c75a2e" text-anchor="middle">?</text>
+
+    <!-- bébé sur les genoux, tourné à l'opposé de la seringue -->
+    <ellipse cx="305" cy="312" rx="60" ry="50" fill="#ffffff"/>
+    <ellipse cx="305" cy="312" rx="60" ry="50" fill="#ec835a" opacity="0.08"/>
+    <circle cx="280" cy="260" r="35" fill="#f6d7b0"/>
+    <path d="M262 236 q18 -15 36 0" stroke="#3a2a1a" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <path d="M266 258 q8 -6 16 -1 M284 256 q8 -5 16 1" stroke="#3a2a1a" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    <circle cx="272" cy="266" r="3" fill="#3a2a1a"/>
+    <circle cx="290" cy="265" r="3" fill="#3a2a1a"/>
+    <path d="M271 278 q9 -5 18 0" stroke="#b6552f" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    <path d="M250 291 Q214 281 209 260" stroke="#f6d7b0" stroke-width="14" fill="none" stroke-linecap="round"/>
+    <circle cx="208" cy="255" r="10" fill="#f6d7b0"/>
+  </g>
+
+  <!-- ===================== LIGNE D'HÉSITATION, décision suspendue ===================== -->
+  <path d="M390 170 Q540 115 660 160" stroke="#8a8678" stroke-width="2.5" fill="none" stroke-dasharray="2 10" stroke-linecap="round" opacity="0.6"/>
+
+  <!-- flacon de vaccin, au centre, posé sur une petite étagère -->
+  <g filter="url(#soft)" transform="translate(556,210)">
+    <rect x="-6" y="92" width="92" height="10" rx="4" fill="#c3a98e" opacity="0.5"/>
+    <rect x="6" y="18" width="56" height="72" rx="10" fill="#ffffff" stroke="#2a78d6" stroke-width="3"/>
+    <rect x="6" y="18" width="56" height="30" rx="10" fill="#cde2fb"/>
+    <rect x="20" y="0" width="28" height="22" rx="4" fill="#2a78d6"/>
+    <rect x="16" y="-8" width="36" height="10" rx="3" fill="#1c5cab"/>
+    <text x="34" y="70" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="12" font-weight="800" fill="#1c5cab" text-anchor="middle">VACCIN</text>
+    <rect x="16" y="76" width="36" height="3" fill="#9ec5f4"/>
+  </g>
+
+  <!-- ===================== AGENT DE SANTÉ (droite, zone de la confiance) ===================== -->
+  <g filter="url(#soft)">
+    <!-- corps / blouse -->
+    <path d="M790 372 C786 272 808 216 884 216 C960 216 982 272 978 372 Z" fill="#ffffff" stroke="#c3c2b7" stroke-width="2"/>
+    <path d="M852 226 Q884 246 916 226 L916 216 Q884 231 852 216 Z" fill="#2a78d6"/>
+    <rect x="875" y="270" width="18" height="48" rx="4" fill="#2a78d6"/>
+    <rect x="861" y="285" width="46" height="18" rx="4" fill="#2a78d6"/>
 
     <!-- tête -->
-    <circle cx="416" cy="268" r="50" fill="url(#skinMom)"/>
-    <ellipse cx="436" cy="282" rx="26" ry="30" fill="#2f1c0f" opacity="0.2"/>
+    <circle cx="884" cy="176" r="50" fill="#e3b183"/>
+    <path d="M834 170 Q836 124 884 120 Q932 124 934 170 Q932 140 884 138 Q836 140 834 170 Z" fill="#ffffff" stroke="#c3c2b7" stroke-width="2"/>
+    <rect x="871" y="122" width="26" height="11" rx="3" fill="#2a78d6"/>
+    <path d="M862 176 q11 -7 20 0 M890 176 q11 -7 20 0" stroke="#5a3a20" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <circle cx="870" cy="187" r="4.5" fill="#3a2a1a"/>
+    <circle cx="900" cy="187" r="4.5" fill="#3a2a1a"/>
+    <path d="M868 207 q17 13 34 0" stroke="#8a4a2a" stroke-width="4.5" fill="none" stroke-linecap="round"/>
 
-    <!-- cheveux tressés, ramenés en arrière -->
-    <path d="M366 262 Q364 206 416 202 Q468 206 466 262 Q468 230 416 226 Q364 230 366 262 Z" fill="url(#hair)"/>
-    <path d="M370 240 Q382 290 372 340" stroke="#140d08" stroke-width="7" fill="none" stroke-linecap="round" opacity="0.85"/>
-    <path d="M382 228 Q398 282 390 336" stroke="#140d08" stroke-width="6" fill="none" stroke-linecap="round" opacity="0.8"/>
-    <path d="M450 228 Q464 280 456 332" stroke="#140d08" stroke-width="6" fill="none" stroke-linecap="round" opacity="0.8"/>
-    <path d="M462 240 Q478 286 470 334" stroke="#140d08" stroke-width="7" fill="none" stroke-linecap="round" opacity="0.85"/>
+    <!-- bras tendu tenant la seringue, geste assuré et bienveillant -->
+    <path d="M834 258 Q738 228 684 204" stroke="#2a78d6" stroke-width="24" fill="none" stroke-linecap="round"/>
+    <circle cx="680" cy="202" r="16" fill="#e3b183"/>
 
-    <!-- sourcils, yeux mi-clos, tendres -->
-    <path d="M392 266 q12 -8 23 -2 M418 264 q12 -6 23 3" stroke="#1c130c" stroke-width="4" fill="none" stroke-linecap="round"/>
-    <path d="M397 278 q8 5 16 0" stroke="#1c130c" stroke-width="3.6" fill="none" stroke-linecap="round"/>
-    <path d="M425 277 q8 5 16 0" stroke="#1c130c" stroke-width="3.6" fill="none" stroke-linecap="round"/>
-    <!-- nez -->
-    <path d="M414 268 q6 14 -1 20" fill="none" stroke="#3a2314" stroke-width="2.6" stroke-linecap="round"/>
-    <!-- sourire chaleureux, regard vers le bébé -->
-    <path d="M398 300 q18 14 36 1" stroke="#3a2314" stroke-width="4.2" fill="none" stroke-linecap="round"/>
-    <ellipse cx="392" cy="286" rx="8" ry="5" fill="#e08a5a" opacity="0.3"/>
-    <ellipse cx="444" cy="285" rx="8" ry="5" fill="#e08a5a" opacity="0.3"/>
-  </g>
-
-  <!-- ===== BÉBÉ, ENVELOPPÉ DANS UN PAGNE COLORÉ ===== -->
-  <g filter="url(#shadow)">
-    <!-- pagne / tissu enveloppant -->
-    <path d="M300 500 Q290 410 360 398 Q430 384 486 408 Q534 428 522 500 Z" fill="url(#wax)" stroke="#8a3715" stroke-width="2"/>
-    <path d="M300 500 Q290 410 360 398 Q430 384 486 408 Q534 428 522 500 Z" fill="#000000" opacity="0.06"/>
-    <path d="M330 404 Q400 392 470 412" stroke="#f3b23a" stroke-width="5" fill="none" opacity="0.8" stroke-linecap="round"/>
-
-    <!-- tête du bébé -->
-    <circle cx="398" cy="392" r="34" fill="url(#skinBaby)"/>
-    <path d="M374 374 q24 -16 48 0 q-6 -11 -24 -12 q-18 1 -24 12 Z" fill="url(#hair)"/>
-    <ellipse cx="386" cy="392" rx="5.6" ry="6.6" fill="#140d08"/><circle cx="387.4" cy="389.6" r="1.7" fill="#ffffff"/>
-    <ellipse cx="410" cy="391" rx="5.6" ry="6.6" fill="#140d08"/><circle cx="411.4" cy="388.6" r="1.7" fill="#ffffff"/>
-    <!-- bouche entrouverte, recevant le vaccin oral -->
-    <ellipse cx="400" cy="406" rx="6.5" ry="5.5" fill="#7a3a22"/>
-    <ellipse cx="378" cy="400" rx="6" ry="4" fill="#d98a5c" opacity="0.4"/>
-    <ellipse cx="420" cy="399" rx="6" ry="4" fill="#d98a5c" opacity="0.4"/>
-
-    <!-- petite main qui dépasse du pagne -->
-    <circle cx="452" cy="440" r="12" fill="url(#skinBaby)"/>
-  </g>
-
-  <!-- ===== INFIRMIÈRE, PENCHÉE, ADMINISTRANT LE VACCIN ===== -->
-  <g filter="url(#shadow)">
-    <ellipse cx="840" cy="500" rx="190" ry="16" fill="#0b0b0b" opacity="0.14"/>
-
-    <!-- blouse / haut de tenue médicale -->
-    <path d="M700 500 Q680 380 760 330 Q800 306 848 322 Q900 342 900 410 L912 500 Z" fill="url(#scrub)"/>
-    <path d="M760 330 Q800 352 848 334 L848 322 Q800 338 760 318 Z" fill="#4f84ab"/>
-    <path d="M820 330 Q870 345 895 400 L910 500 L878 500 Q868 420 838 365 Z" fill="#000000" opacity="0.06"/>
-
-    <!-- bras tendu, geste précis et doux, jusqu'au visage du bébé -->
-    <path d="M706 404 Q580 410 470 398" stroke="url(#scrub)" stroke-width="26" fill="none" stroke-linecap="round"/>
-    <!-- bras arrière, soutien -->
-    <path d="M860 350 Q900 380 884 430" stroke="url(#scrub)" stroke-width="22" fill="none" stroke-linecap="round"/>
-
-    <!-- cou -->
-    <rect x="780" y="286" width="32" height="26" fill="#4e2f1b"/>
-
-    <!-- tête, inclinée vers le bébé -->
-    <g transform="rotate(14 800 250)">
-      <circle cx="800" cy="250" r="48" fill="url(#skinNurse)"/>
-      <ellipse cx="818" cy="264" rx="25" ry="28" fill="#1c130c" opacity="0.22"/>
-      <!-- cheveux tressés, attachés en chignon -->
-      <path d="M752 244 Q750 192 800 188 Q850 192 848 244 Q850 214 800 210 Q750 214 752 244 Z" fill="url(#hair)"/>
-      <circle cx="844" cy="206" r="15" fill="url(#hair)"/>
-      <path d="M778 248 q12 -8 23 -2 M804 246 q12 -6 23 3" stroke="#140d08" stroke-width="4" fill="none" stroke-linecap="round"/>
-      <ellipse cx="786" cy="260" rx="4.6" ry="5.2" fill="#140d08"/><circle cx="787.3" cy="257.6" r="1.4" fill="#ffffff"/>
-      <ellipse cx="814" cy="259" rx="4.6" ry="5.2" fill="#140d08"/><circle cx="815.3" cy="256.6" r="1.4" fill="#ffffff"/>
-      <path d="M798 250 q6 13 -1 19" fill="none" stroke="#2c1a0f" stroke-width="2.4" stroke-linecap="round"/>
-      <path d="M782 282 q18 12 36 1" stroke="#2c1a0f" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <!-- seringue, grande et nette, pointant vers le bébé -->
+    <g transform="translate(560,150) rotate(16)">
+      <rect x="-16" y="12" width="18" height="12" fill="#898781"/>
+      <path d="M-16 18 L-40 18" stroke="#898781" stroke-width="3.5" stroke-linecap="round"/>
+      <rect x="2" y="2" width="82" height="24" rx="5" fill="url(#syringeBody)" stroke="#5598e7" stroke-width="2.5"/>
+      <rect x="12" y="6" width="54" height="16" fill="#9ec5f4"/>
+      <line x1="24" y1="2" x2="24" y2="26" stroke="#5598e7" stroke-width="1.5"/>
+      <line x1="38" y1="2" x2="38" y2="26" stroke="#5598e7" stroke-width="1.5"/>
+      <line x1="52" y1="2" x2="52" y2="26" stroke="#5598e7" stroke-width="1.5"/>
+      <rect x="66" y="-9" width="12" height="38" rx="2" fill="#898781"/>
     </g>
   </g>
 
-  <!-- petite main + compte-gouttes, juste au-dessus de la bouche du bébé -->
-  <g filter="url(#soft)">
-    <circle cx="470" cy="398" r="15" fill="url(#skinNurse)"/>
-    <g transform="translate(420,368) rotate(-18)">
-      <rect x="0" y="0" width="28" height="38" rx="7" fill="#ffffff" stroke="#2a78d6" stroke-width="2.4"/>
-      <rect x="0" y="15" width="28" height="23" rx="7" fill="#cde2fb"/>
-      <rect x="8" y="-11" width="12" height="13" rx="2.5" fill="#2a78d6"/>
-      <rect x="6" y="-16" width="16" height="6" rx="2" fill="#164a8a"/>
-      <path d="M8 38 L6 48" stroke="#2a78d6" stroke-width="2.4" stroke-linecap="round"/>
-    </g>
+  <!-- ===================== BANDEAU DE TITRE, en bas, pour l'ancrage du propos ===================== -->
+  <g font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" text-anchor="middle">
+    <text x="600" y="408" font-size="17" font-weight="700" fill="#52514e">Entre doute des parents et confiance envers la vaccination — ce que mesure cette enquête</text>
   </g>
-
-  <!-- bandeau bas -->
-  <rect x="0" y="482" width="1200" height="38" fill="#0b0b0b" opacity="0.22"/>
-  <text x="600" y="507" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="17" font-weight="700"
-        fill="#ffffff" text-anchor="middle">Vaccination de routine des enfants 0-23 mois — Zone de Santé de Lemba</text>
 </svg>

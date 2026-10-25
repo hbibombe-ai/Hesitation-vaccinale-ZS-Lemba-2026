@@ -32,6 +32,11 @@ KEY_FIELDS = [
 ]
 
 
+def _est_oui(s: pd.Series) -> pd.Series:
+    """Vrai quand la réponse vaut 1 (« oui »), que Kobo l'exporte en 1, 1.0 ou "1"."""
+    return pd.to_numeric(s, errors="coerce") == 1
+
+
 def _find_col(df: pd.DataFrame, short_name: str) -> str | None:
     """Retrouve une colonne Kobo quel que soit son préfixe de groupe éventuel."""
     if short_name in df.columns:
@@ -248,15 +253,108 @@ def summary_by_aire(df: pd.DataFrame) -> pd.DataFrame:
     return out
 
 
+# ------------------------------------------------------------------
+# SOUMISSIONS INCOMPLÈTES (mises de côté)
+# ------------------------------------------------------------------
+# Champs d'identification indispensables pour rattacher un entretien à une
+# date, un enquêteur et une aire de santé.
+CHAMPS_IDENTIFICATION = {
+    "ID02": "date d'entretien", "ID03": "enquêteur", "ID04": "aire de santé",
+}
+# Champs qui doivent être remplis quand le ménage est éligible ET consentant
+# (le questionnaire a donc dû être administré jusqu'au bout). Seuls ceux
+# présents dans l'export sont contrôlés : compléter la liste avec d'autres
+# variables obligatoires du questionnaire si besoin.
+CHAMPS_OBLIGATOIRES_EVALUES = {
+    "B02": "section B", "C03": "section C", "HESITATION": "statut d'hésitation",
+}
+
+
+def incomplete_reasons(df: pd.DataFrame) -> pd.Series:
+    """Renvoie, pour chaque soumission, le(s) motif(s) d'incomplétude séparés
+    par « ; » (chaîne vide = soumission complète). Règles :
+      1. un champ d'identification (ID02, ID03, ID04) est vide ;
+      2. l'éligibilité (A01) ou, si A01 = 1, le consentement (A04) n'est pas renseigné ;
+      3. ménage éligible et consentant, mais un champ obligatoire du
+         questionnaire est vide (questionnaire interrompu) ;
+      4. soumission marquée « Non approuvée » dans la validation Kobo.
+    """
+    motifs = pd.Series([[] for _ in range(len(df))], index=df.index, dtype=object)
+    if df.empty:
+        return motifs.map(lambda m: "")
+
+    def _vide(col: str) -> pd.Series:
+        s = df[col]
+        return s.isna() | (s.astype(str).str.strip().isin(["", "nan", "None", "NaT"]))
+
+    def _ajouter(mask: pd.Series, texte: str) -> None:
+        for i in df.index[mask.fillna(False)]:
+            motifs.at[i].append(texte)
+
+    for field, label in CHAMPS_IDENTIFICATION.items():
+        col = _find_col(df, field)
+        if col:
+            _ajouter(_vide(col), f"{label} manquant(e) ({field})")
+
+    a01, a04 = _find_col(df, "A01"), _find_col(df, "A04")
+    if a01:
+        _ajouter(_vide(a01), "éligibilité non renseignée (A01)")
+        if a04:
+            _ajouter(_est_oui(df[a01]) & _vide(a04), "consentement non renseigné (A04)")
+
+    evalues = evaluated_mask(df) if all(_find_col(df, c) for c in ["A01", "A02", "A04"]) \
+        else pd.Series(True, index=df.index)
+    for field, label in CHAMPS_OBLIGATOIRES_EVALUES.items():
+        col = _find_col(df, field)
+        if col:
+            _ajouter(evalues & _vide(col), f"questionnaire interrompu : {label} vide ({field})")
+
+    for col in ["_validation_status.uid", "_validation_status"]:
+        if col in df.columns:
+            statut = df[col].astype(str).str.lower()
+            _ajouter(statut.str.contains("not_approved|not approved|non approuv", regex=True),
+                     "rejetée lors de la validation Kobo")
+            break
+
+    return motifs.map(lambda m: " ; ".join(dict.fromkeys(m)))
+
+
+def split_complete(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Sépare les soumissions complètes (utilisées pour tous les indicateurs)
+    des soumissions incomplètes (mises de côté, avec leur motif)."""
+    if df.empty:
+        return df, df.assign(MOTIF_MISE_DE_COTE=pd.Series(dtype=str))
+    motifs = incomplete_reasons(df)
+    complet = df[motifs == ""].copy()
+    incomplet = df[motifs != ""].copy()
+    incomplet["MOTIF_MISE_DE_COTE"] = motifs[motifs != ""]
+    return complet, incomplet
+
+
+def evaluated_mask(df: pd.DataFrame) -> pd.Series:
+    """Ménages réellement évalués pour l'hésitation vaccinale : éligibles ET
+    consentants (A01 = A02 = A04 = 1). Ce sont eux qui comptent pour l'objectif
+    de 424 ménages. Si les champs A01/A02/A04 sont absents de l'export, tous
+    les formulaires sont comptés (repli prudent signalé dans l'interface)."""
+    a01, a02, a04 = _find_col(df, "A01"), _find_col(df, "A02"), _find_col(df, "A04")
+    if not (a01 and a02 and a04):
+        return pd.Series(True, index=df.index)
+    return (
+        _est_oui(df[a01])
+        & _est_oui(df[a02])
+        & _est_oui(df[a04])
+    )
+
+
 def eligibility_rate(df: pd.DataFrame) -> dict:
     """Taux d'éligibilité et de consentement, basé sur A01/A02/A04."""
     out = {"n_total": len(df), "n_eligibles_consentants": None, "taux_pct": None}
     a01, a02, a04 = _find_col(df, "A01"), _find_col(df, "A02"), _find_col(df, "A04")
     if a01 and a02 and a04 and len(df):
         mask = (
-            (df[a01].astype(str) == "1")
-            & (df[a02].astype(str) == "1")
-            & (df[a04].astype(str) == "1")
+            _est_oui(df[a01])
+            & _est_oui(df[a02])
+            & _est_oui(df[a04])
         )
         out["n_eligibles_consentants"] = int(mask.sum())
         out["taux_pct"] = round(mask.mean() * 100, 1)

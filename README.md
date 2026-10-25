@@ -5,22 +5,43 @@ Tableau de bord de suivi de la collecte de données (Streamlit) pour le mémoire
 > *Facteurs associés à l'hésitation vaccinale chez les parents ou tuteurs d'enfants de
 > 0 à 23 mois en vaccination de routine — Zone de Santé de Lemba, Kinshasa (RDC), 2026*
 
-**Organisation du tableau de bord :** KPI principaux en tête (dont le nombre de jours
+> **Phase en cours : collecte des données** (le pré-test est terminé).
+> **Objectif : 424 ménages** à atteindre par les enquêteurs pour évaluer l'hésitation
+> vaccinale. Sont comptés comme « ménages évalués » les formulaires éligibles **et**
+> consentants (A01 = A02 = A04 = 1) ; l'avancement est calculé sur toute la base,
+> indépendamment des filtres, et l'objectif est fixé dans `app.py`
+> (`OBJECTIF_MENAGES = 424`).
+
+> **Soumissions incomplètes mises de côté.** Une soumission est exclue de tous les
+> indicateurs (et des 424 ménages) si : un champ d'identification (ID02 date, ID03
+> enquêteur, ID04 aire de santé) est vide ; l'éligibilité (A01) ou, si A01 = 1, le
+> consentement (A04) n'est pas renseigné ; le ménage est éligible et consentant mais un
+> champ obligatoire du questionnaire est vide (B02, C03, HESITATION — liste
+> `CHAMPS_OBLIGATOIRES_EVALUES` dans `data_quality.py`, à compléter si besoin) ; ou elle
+> a été marquée « Non approuvée » dans la validation Kobo. Elles sont listées, avec leur
+> motif, dans l'onglet **« ⏸️ Mises de côté »** (par enquêteur, par motif, export CSV) et
+> réintègrent automatiquement les indicateurs une fois corrigées dans Kobo.
+> Le fichier d'exemple contient 6 soumissions incomplètes fictives pour le démontrer.
+
+**Organisation du tableau de bord :** bandeau de phase, barre d'avancement vers les 424
+ménages (ménages évalués, restants, rythme moyen et estimation des jours de collecte
+restants), puis KPI principaux (dont le nombre de jours
 depuis la dernière soumission, utile pour repérer une interruption de terrain), puis cinq
 onglets — *Vue d'ensemble* (tendance cumulée, volumes par aire/enquêteur), *Par
 enquêteur* (heatmap jour × enquêteur + tableau détaillé : volume, part, durée moyenne,
 éligibilité, dernière activité), *Par aire de santé* (même détail par AS), *Qualité des
 données* et *Données brutes / export*.
 
-**Ce que fait l'outil :** suivre l'avancement du terrain (nombre d'entretiens par aire
+**Ce que fait l'outil :** suivre l'avancement du terrain vers l'objectif de 424 ménages (nombre d'entretiens par aire
 de santé et par enquêteur, progression dans le temps), détecter d'éventuelles anomalies
 de saisie (doublons de ménage, entretiens trop courts, champs manquants) et afficher une
 prévalence **provisoire** de l'hésitation vaccinale, explicitement signalée comme non
 définitive.
 
 **Ce que l'outil ne fait pas :** il ne calcule ni ne publie aucun résultat scientifique
-final du mémoire. Les scores composites (SCORE_CONNAISS, SCORE_CONFIANCE, etc.) restent à
-construire sous SPSS après le pré-test, conformément à l'Annexe 1 du questionnaire
+final du mémoire. Les scores composites (SCORE_CONNAISS, SCORE_CONFIANCE, etc.) seront
+construits sous SPSS à l'analyse finale, une fois les 424 ménages atteints, conformément à
+l'Annexe 1 du questionnaire
 `QUESTIONNAIRE_K-K-A.docx`.
 
 ## 1. Structure du projet
