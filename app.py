@@ -74,22 +74,42 @@ st.caption(
 
 
 def render_hero_banner() -> None:
-    """Affiche l'illustration d'en-tête (SVG) encodée en base64, pour éviter
-    toute dépendance réseau externe : l'image reste 100 % autonome dans le
-    dépôt et s'affiche même sans connexion internet sur le poste client."""
-    svg_path = Path(__file__).parent / "assets" / "hero_hesitation.svg"
-    if not svg_path.exists():
+    """Affiche l'image d'en-tête, encodée en base64, pour éviter toute
+    dépendance réseau externe : l'image reste 100 % autonome dans le dépôt
+    et s'affiche même sans connexion internet sur le poste client.
+
+    Photo fournie directement par l'utilisateur (photo de terrain, mère et
+    nourrisson, contexte rural) — utilisée telle quelle à sa demande.
+    """
+    assets_dir = Path(__file__).parent / "assets"
+    photo_path = assets_dir / "hero_photo.jpg"
+    svg_path = assets_dir / "hero_hesitation.svg"
+
+    if photo_path.exists():
+        img_b64 = base64.b64encode(photo_path.read_bytes()).decode("utf-8")
+        st.markdown(
+            f"""
+            <div style="border-radius:18px; overflow:hidden; margin-bottom:0.6rem;
+                        border:1px solid {theme.GRIDLINE}; box-shadow:0 2px 10px rgba(11,11,11,0.06);
+                        max-height:380px; display:flex; justify-content:center; background:{theme.INK_PRIMARY};">
+                <img src="data:image/jpeg;base64,{img_b64}" style="height:380px; width:auto; max-width:100%; object-fit:cover; display:block;" />
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
         return
-    svg_b64 = base64.b64encode(svg_path.read_bytes()).decode("utf-8")
-    st.markdown(
-        f"""
-        <div style="border-radius:18px; overflow:hidden; margin-bottom:0.6rem;
-                    border:1px solid {theme.GRIDLINE}; box-shadow:0 2px 10px rgba(11,11,11,0.06);">
-            <img src="data:image/svg+xml;base64,{svg_b64}" style="width:100%; display:block;" />
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+
+    if svg_path.exists():
+        svg_b64 = base64.b64encode(svg_path.read_bytes()).decode("utf-8")
+        st.markdown(
+            f"""
+            <div style="border-radius:18px; overflow:hidden; margin-bottom:0.6rem;
+                        border:1px solid {theme.GRIDLINE}; box-shadow:0 2px 10px rgba(11,11,11,0.06);">
+                <img src="data:image/svg+xml;base64,{svg_b64}" style="width:100%; display:block;" />
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
 
 
 render_hero_banner()
