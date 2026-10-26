@@ -27,6 +27,17 @@ CRITICAL = "#d03b3b"
 
 FONT_FAMILY = "system-ui, -apple-system, 'Segoe UI', sans-serif"
 
+# Jetons d'interface (cartes blanches sur fond clair, bleu primaire) — l'interface
+# n'utilise jamais ces couleurs pour encoder une série de données.
+BG = "#f4f7fb"
+BORDER = "#e6ebf2"
+TEXT = "#0f172a"
+TEXT_SECONDARY = "#334155"
+MUTED = "#64748b"
+PRIMARY = "#1f5ae0"
+PRIMARY_SOFT = "#eaf1ff"
+PRIMARY_BORDER = "#c9dafc"
+
 # Rampe séquentielle bleue (du plus clair = proche de zéro, au plus foncé),
 # utilisée pour les encodages de magnitude (heatmap de tendance).
 BLUE_SEQUENTIAL = [
@@ -46,8 +57,8 @@ def apply_layout(fig, height=380, show_legend=False):
     fig.update_layout(
         height=height,
         margin=dict(l=10, r=10, t=10, b=10),
-        paper_bgcolor=SURFACE,
-        plot_bgcolor=SURFACE,
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
         font=dict(family=FONT_FAMILY, color=INK_SECONDARY, size=13),
         showlegend=show_legend,
         hoverlabel=dict(

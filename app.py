@@ -9,501 +9,560 @@ Phase en cours : COLLECTE DES DONNÉES (le pré-test est terminé).
 Objectif : 424 ménages enquêtés (éligibles et consentants) pour évaluer
 l'hésitation vaccinale.
 
-Ce tableau de bord NE calcule ni ne publie aucun résultat scientifique final
-du mémoire. Il sert uniquement à suivre l'avancement et la qualité de la
-collecte pendant le terrain (progression vers les 424 ménages, par aire de santé et par enquêteur,
-anomalies de saisie, durée des entretiens). Toute prévalence affichée est
+Navigation par menu latéral : chaque page est rendue indépendamment, de sorte
+qu'une erreur sur une page (donnée inattendue de l'export Kobo) n'empêche
+jamais l'affichage des autres. Toute prévalence ou analyse affichée est
 explicitement signalée comme provisoire.
 """
 import base64
 import io
-from datetime import date
+import json
+import traceback
+from contextlib import contextmanager
+from datetime import date, datetime
 from pathlib import Path
 
 import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
+import analyses as AN
 import theme
+import ui
 from data_quality import (
     AIRES_SANTE,
     ENQUETEURS,
+    JOURS_INACTIVITE_ALERTE,
     add_sequential_numbers,
     apply_filters,
     eligibility_rate,
     evaluated_mask,
-    split_complete,
-    statut_aires,
-    JOURS_INACTIVITE_ALERTE,
     hesitation_prevalence,
     normalize_columns,
     quality_report,
+    split_complete,
+    statut_aires,
     submission_trend_matrix,
     summary_by_aire,
     summary_by_enqueteur,
 )
-import analyses as AN
 from kobo_api import KoboAPIError, fetch_submissions
 
-# Taille d'échantillon fixée par le protocole du mémoire : nombre de ménages que
-# les enquêteurs doivent atteindre pour évaluer l'hésitation vaccinale.
+# Taille d'échantillon fixée par le protocole du mémoire (§ 3.4.2) : nombre de
+# ménages que les enquêteurs doivent atteindre pour évaluer l'hésitation vaccinale.
 OBJECTIF_MENAGES = 424
+PLOTLY_CONFIG = {"displayModeBar": False, "locale": "fr"}
+
 
 def get_kobo_secrets() -> dict:
-    """Lit la section [kobo] des secrets Streamlit sans jamais lever d'exception,
-    y compris quand aucun fichier secrets.toml n'existe du tout (cas d'un premier
-    déploiement non encore configuré)."""
+    """Lit la section [kobo] des secrets Streamlit sans jamais lever d'exception."""
     try:
         return dict(st.secrets.get("kobo", {}))
-    except Exception:
+    except Exception:  # noqa: BLE001
         return {}
 
 
-st.set_page_config(page_title="VaxSuivi-Lemba", page_icon="💉", layout="wide")
-
-st.markdown(
-    f"""
-    <style>
-    .stApp {{ background-color: {theme.SURFACE}; }}
-    [data-testid="stMetric"] {{
-        background-color: #ffffff;
-        border: 1px solid {theme.GRIDLINE};
-        border-radius: 10px;
-        padding: 14px 16px 10px 16px;
-    }}
-    [data-testid="stMetricLabel"] {{ color: {theme.INK_SECONDARY}; }}
-    [data-testid="stMetricValue"] {{ color: {theme.INK_PRIMARY}; }}
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
-
-def hero_image_html() -> str:
-    """Illustration d'en-tête (SVG) encodée en base64, sans dépendance réseau externe.
-    Affichée en petit format à côté du titre pour ne pas occuper tout l'écran."""
-    svg_path = Path(__file__).parent / "assets" / "hero_hesitation.svg"
-    if not svg_path.exists():
-        return ""
-    svg_b64 = base64.b64encode(svg_path.read_bytes()).decode("utf-8")
-    return (
-        f"<div style='border-radius:14px; overflow:hidden; border:1px solid {theme.GRIDLINE};"
-        f" box-shadow:0 2px 8px rgba(11,11,11,0.05); max-width:340px; margin:0.4rem 0 0 auto;'>"
-        f"<img src='data:image/svg+xml;base64,{svg_b64}' alt='Illustration : un parent hésite "
-        f"entre oui et non face à la vaccination' style='width:100%; max-height:125px;"
-        f" object-fit:cover; display:block;' /></div>"
-    )
+def svg_b64() -> str:
+    p = Path(__file__).parent / "assets" / "hero_hesitation.svg"
+    return base64.b64encode(p.read_bytes()).decode("utf-8") if p.exists() else ""
 
 
-entete_txt, entete_img = st.columns([5, 2], vertical_alignment="center")
-with entete_txt:
-    st.title("💉 VaxSuivi-Lemba")
-    st.caption(
-        "Suivi de la collecte — Hésitation vaccinale chez les parents/tuteurs "
-        "d'enfants 0-23 mois, Zone de Santé de Lemba (Kinshasa, 2026)"
-    )
-with entete_img:
-    st.markdown(hero_image_html(), unsafe_allow_html=True)
-st.success(
-    f"📋 **Phase en cours : collecte des données** (le pré-test est terminé). "
-    f"Objectif fixé aux enquêteurs : **{OBJECTIF_MENAGES} ménages** enquêtés pour évaluer "
-    f"l'hésitation vaccinale."
-)
+def fr(x, d=1) -> str:
+    """Nombre au format français (virgule décimale)."""
+    return f"{x:.{d}f}".replace(".", ",")
+
+
+def cellules_simples(df: pd.DataFrame) -> pd.DataFrame:
+    """Convertit les cellules listes/dictionnaires (groupes répétés, pièces jointes,
+    géolocalisation renvoyés par l'API Kobo) en texte JSON, pour l'affichage et l'export."""
+    out = df.copy()
+    for c in out.columns:
+        if out[c].dtype == object and out[c].map(lambda v: isinstance(v, (list, dict, tuple))).any():
+            out[c] = out[c].map(lambda v: json.dumps(v, ensure_ascii=False, default=str)
+                                if isinstance(v, (list, dict, tuple)) else v)
+    return out
+
+
+st.set_page_config(page_title="VaxSuivi-Lemba", page_icon="💉", layout="wide",
+                   initial_sidebar_state="expanded")
+ui.inject_css()
 
 # ------------------------------------------------------------------
-# SOURCE DES DONNÉES
+# MENU LATÉRAL : marque, navigation, source, filtres
 # ------------------------------------------------------------------
-st.sidebar.header("Source des données")
-source_mode = st.sidebar.radio(
-    "Charger les données depuis :",
-    ["API KoboToolbox (live)", "Fichier exporté (CSV / XLSX)"],
-    index=0,
-)
+PAGES = {
+    "Tableau de bord": ":material/space_dashboard:",
+    "Aires de santé": ":material/location_on:",
+    "Enquêteurs": ":material/groups:",
+    "Projection des analyses": ":material/query_stats:",
+    "Qualité des données": ":material/fact_check:",
+    "Mises de côté": ":material/pause_circle:",
+    "Données brutes": ":material/table_view:",
+}
+with st.sidebar:
+    st.markdown(
+        "<div class='vs-brand'><div class='vs-logo'>💉</div><div><b>Vax<span>Suivi</span>-Lemba</b>"
+        "<small>Hésitation vaccinale · ZS Lemba</small></div></div>", unsafe_allow_html=True)
+    page = st.radio("Navigation", list(PAGES), key="nav", label_visibility="collapsed",
+                    format_func=lambda p: f"{PAGES[p]} {p}")
+
+with st.sidebar.expander("Source des données", icon=":material/cloud_sync:", expanded=False):
+    source_mode = st.radio("Charger les données depuis :",
+                           ["API KoboToolbox (live)", "Fichier exporté (CSV / XLSX)"], index=0)
 
 df_raw = pd.DataFrame()
+source_label, source_ok = "", False
+message_source = None
 
 if source_mode == "API KoboToolbox (live)":
     # Le serveur, l'asset UID et le jeton d'API ne sont JAMAIS saisissables dans
-    # l'interface : n'importe qui ayant le lien de l'app (publique sur Streamlit
-    # Community Cloud) pourrait sinon lire ou remplacer le jeton d'accès à la
-    # vraie base de collecte. Ces trois valeurs ne viennent que des secrets
-    # configurés par l'administrateur (.streamlit/secrets.toml en local, ou
-    # "App settings > Secrets" sur Streamlit Cloud) — voir le README, §3.
+    # l'interface (app publique par lien) : ils viennent uniquement des secrets
+    # configurés par l'administrateur — voir le README, §3.
     kobo_secrets = get_kobo_secrets()
     server_url = kobo_secrets.get("server_url", "")
     asset_uid = kobo_secrets.get("asset_uid", "")
     api_token = kobo_secrets.get("api_token", "")
 
-    if st.sidebar.button("🔄 Actualiser les données", type="primary"):
-        st.cache_data.clear()
-
-    @st.cache_data(ttl=300, show_spinner="Récupération des soumissions depuis Kobo...")
+    @st.cache_data(ttl=300, show_spinner="Récupération des soumissions depuis Kobo…")
     def _load_from_kobo(server_url, asset_uid, api_token):
         return fetch_submissions(server_url, asset_uid, api_token)
 
+    if st.sidebar.button("Actualiser les données", icon=":material/refresh:", type="primary",
+                         width="stretch"):
+        st.cache_data.clear()
     if server_url and asset_uid and api_token:
         try:
             df_raw = _load_from_kobo(server_url, asset_uid, api_token)
+            source_label, source_ok = "API KoboToolbox — connectée", True
         except KoboAPIError as e:
-            st.error(f"Impossible de récupérer les données Kobo : {e}")
+            message_source = ("error", f"Impossible de récupérer les données Kobo : {e}")
+            source_label = "API KoboToolbox — erreur"
     else:
-        st.info(
-            "La connexion Kobo n'est pas encore configurée pour cette application. "
-            "Un administrateur doit renseigner `server_url`, `asset_uid` et `api_token` "
-            "dans les secrets de l'app (voir le README, §3) — ces informations ne sont "
-            "volontairement pas saisissables ici, pour protéger l'accès à la vraie base "
-            "de collecte. En attendant, utilisez l'option « Fichier exporté » ci-dessus."
-        )
-
+        source_label = "API KoboToolbox — non configurée"
+        message_source = ("info",
+                          "La connexion Kobo n'est pas encore configurée pour cette application. Un "
+                          "administrateur doit renseigner `server_url`, `asset_uid` et `api_token` dans "
+                          "les secrets de l'app (voir le README, §3). En attendant, choisissez « Fichier "
+                          "exporté » dans le menu, rubrique « Source des données ».")
 else:
-    uploaded = st.sidebar.file_uploader("Export Kobo (CSV ou XLSX)", type=["csv", "xlsx"])
+    with st.sidebar.expander("Fichier exporté", icon=":material/upload_file:", expanded=True):
+        uploaded = st.file_uploader("Export Kobo (CSV ou XLSX)", type=["csv", "xlsx"])
     if uploaded is not None:
-        if uploaded.name.endswith(".csv"):
-            df_raw = pd.read_csv(uploaded)
-        else:
-            df_raw = pd.read_excel(uploaded)
+        df_raw = pd.read_csv(uploaded) if uploaded.name.endswith(".csv") else pd.read_excel(uploaded)
+        source_label, source_ok = f"Fichier — {uploaded.name}", True
     else:
-        st.info("Chargez un export Kobo (menu Kobo : Data > Downloads) pour commencer.")
+        source_label = "Fichier — aucun fichier chargé"
+        message_source = ("info", "Chargez un export Kobo (menu Kobo : Data › Downloads) dans le menu "
+                                  "latéral, rubrique « Fichier exporté », pour commencer.")
+
+
+def carte_statut_source() -> None:
+    teinte = "green" if source_ok else "orange"
+    _, fg = ui.TONES[teinte]
+    st.sidebar.markdown(
+        f"<div class='vs-sys'><span style='color:{fg};font-size:1.2rem'>●</span><div>"
+        f"<span>Source des données</span><b style='color:{fg};font-size:0.84rem'>{ui.esc(source_label)}</b>"
+        f"</div></div>", unsafe_allow_html=True)
+
 
 if df_raw.empty:
+    carte_statut_source()
+    ui.page_header("VaxSuivi-Lemba", "Collecte en cours",
+                   "Suivi de la collecte — hésitation vaccinale, ZS Lemba (Kinshasa, 2026)", svg_b64())
+    if message_source:
+        (st.error if message_source[0] == "error" else st.info)(message_source[1])
     st.stop()
 
 df_all = normalize_columns(df_raw)
-df_all = add_sequential_numbers(df_all)  # N_FORMULAIRE / N_MENAGE, calculés sur l'ensemble des
-                                          # soumissions avant filtrage, pour rester stables
-
+df_all = add_sequential_numbers(df_all)   # N_FORMULAIRE / N_MENAGE, stables avant filtrage
 # Les soumissions incomplètes sont mises de côté : elles n'entrent dans AUCUN
-# indicateur (ni dans les 424 ménages) et sont listées dans un onglet dédié
-# pour être complétées ou corrigées par les enquêteurs.
+# indicateur (ni dans les 424 ménages) et sont listées sur une page dédiée.
 df, df_incomplet = split_complete(df_all)
 
 # ------------------------------------------------------------------
 # FILTRES
 # ------------------------------------------------------------------
-st.sidebar.header("Filtres")
+with st.sidebar.expander("Filtres", icon=":material/filter_alt:", expanded=False):
+    aires_present = sorted(df_all["ID04"].dropna().unique().tolist()) if "ID04" in df_all.columns else []
+    aires_sel = st.multiselect("Aire de santé", options=aires_present,
+                               format_func=lambda x: AIRES_SANTE.get(x, x))
+    enq_present = sorted(df_all["ID03"].dropna().unique().tolist()) if "ID03" in df_all.columns else []
+    enq_sel = st.multiselect("Enquêteur", options=enq_present, format_func=lambda x: ENQUETEURS.get(x, x))
+    date_min = date_max = None
+    if "ID02" in df.columns:
+        dates_valides = pd.to_datetime(df["ID02"], errors="coerce").dropna()
+        if len(dates_valides):
+            min_d, max_d = dates_valides.min().date(), dates_valides.max().date()
+            periode = st.date_input("Période de collecte", value=(min_d, max_d),
+                                    min_value=min_d, max_value=max_d)
+            # Pendant la sélection d'une plage, Streamlit ne renvoie qu'une date : on l'accepte.
+            if isinstance(periode, (tuple, list)):
+                date_min = periode[0] if len(periode) >= 1 else None
+                date_max = periode[1] if len(periode) >= 2 else None
+            else:
+                date_min = periode
 
-aires_present = sorted(df_all["ID04"].dropna().unique().tolist()) if "ID04" in df_all.columns else []
-aires_sel = st.sidebar.multiselect(
-    "Aire de santé", options=aires_present, format_func=lambda x: AIRES_SANTE.get(x, x),
-)
-
-enq_present = sorted(df_all["ID03"].dropna().unique().tolist()) if "ID03" in df_all.columns else []
-enq_sel = st.sidebar.multiselect(
-    "Enquêteur", options=enq_present, format_func=lambda x: ENQUETEURS.get(x, x),
-)
-
-date_min = date_max = None
-if "ID02" in df.columns:
-    dates_valides = pd.to_datetime(df["ID02"], errors="coerce").dropna()
-    if len(dates_valides):
-        min_d, max_d = dates_valides.min().date(), dates_valides.max().date()
-        date_min, date_max = st.sidebar.date_input(
-            "Période de collecte", value=(min_d, max_d), min_value=min_d, max_value=max_d,
-        )
+carte_statut_source()
+st.sidebar.markdown(
+    f"<div class='vs-sys'><span style='font-size:1.1rem'>🎯</span><div><span>Objectif de la collecte</span>"
+    f"<b style='font-size:0.84rem'>{OBJECTIF_MENAGES} ménages évalués</b></div></div>",
+    unsafe_allow_html=True)
 
 df_f = apply_filters(df, aires=aires_sel or None, enqueteurs=enq_sel or None,
-                      date_min=date_min, date_max=date_max)
-# Pas de filtre de date sur les incomplètes : une date manquante est justement
-# un motif de mise de côté, elle ne doit pas les faire disparaître de la liste.
+                     date_min=date_min, date_max=date_max)
+# Pas de filtre de date sur les incomplètes : une date manquante est un motif de mise de côté.
 df_inc_f = apply_filters(df_incomplet, aires=aires_sel or None, enqueteurs=enq_sel or None)
+filtres_actifs = bool(aires_sel or enq_sel)
 
-st.sidebar.info(
-    f"🎯 Objectif de la collecte : **{OBJECTIF_MENAGES} ménages** évalués "
-    f"(éligibles et consentants). L'avancement est toujours calculé sur l'ensemble "
-    f"de la base, indépendamment des filtres. Les soumissions incomplètes sont mises "
-    f"de côté et ne comptent pas."
-)
-
+# ------------------------------------------------------------------
+# INDICATEURS PARTAGÉS
+# ------------------------------------------------------------------
 qr = quality_report(df_f)
 elig = eligibility_rate(df_f)
 prevalence = hesitation_prevalence(df_f)
 
-# ------------------------------------------------------------------
-# AVANCEMENT VERS L'OBJECTIF (sur toute la base, hors filtres)
-# ------------------------------------------------------------------
 champs_elig_presents = all(c in df.columns for c in ["A01", "A02", "A04"])
-n_evalues = int(evaluated_mask(df).sum())
+masque_eval = evaluated_mask(df)
+n_evalues = int(masque_eval.sum())
 n_restants = max(OBJECTIF_MENAGES - n_evalues, 0)
-taux_avancement = round(n_evalues / OBJECTIF_MENAGES * 100, 1)
+taux_avancement = n_evalues / OBJECTIF_MENAGES * 100
 
-rythme_jour = None
-if "ID02" in df.columns:
-    dates_eval = pd.to_datetime(df.loc[evaluated_mask(df), "ID02"], errors="coerce").dropna()
-    jours_actifs = dates_eval.dt.date.nunique()
-    if jours_actifs:
-        rythme_jour = round(n_evalues / jours_actifs, 1)
+dates_eval = (pd.to_datetime(df.loc[masque_eval, "ID02"], errors="coerce").dropna()
+              if "ID02" in df.columns else pd.Series(dtype="datetime64[ns]"))
+rythme_jour = round(n_evalues / dates_eval.dt.date.nunique(), 1) if len(dates_eval) else None
+jours_restants = int(-(-n_restants // rythme_jour)) if rythme_jour and n_restants else None
 
-# ------------------------------------------------------------------
-# KPI PRINCIPAUX
-# ------------------------------------------------------------------
-st.subheader(f"Avancement vers l'objectif de {OBJECTIF_MENAGES} ménages")
-st.progress(min(n_evalues / OBJECTIF_MENAGES, 1.0),
-            text=f"{n_evalues} / {OBJECTIF_MENAGES} ménages évalués — {taux_avancement} %")
-pa1, pa2, pa3 = st.columns(3)
-pa1.metric("Ménages évalués", f"{n_evalues} / {OBJECTIF_MENAGES}",
-           help="Ménages éligibles ET consentants (A01 = A02 = A04 = 1), sur toute la base.")
-pa2.metric("Ménages restants à atteindre", n_restants if n_restants else "Objectif atteint ✅")
-pa3.metric("Rythme moyen / jour de collecte", f"{rythme_jour} ménages" if rythme_jour else "—",
-           help="Ménages évalués divisés par le nombre de jours où au moins un ménage a été évalué.")
-if rythme_jour and n_restants:
-    st.caption(f"⏳ À ce rythme, il reste environ **{int(-(-n_restants // rythme_jour))} jours de "
-               f"collecte** pour atteindre les {OBJECTIF_MENAGES} ménages.")
-if not champs_elig_presents:
-    st.caption("ℹ️ Champs A01/A02/A04 absents de l'export : tous les formulaires sont comptés "
-               "comme ménages évalués.")
-if len(df_incomplet):
-    st.warning(
-        f"⏸️ **{len(df_incomplet)} soumission(s) incomplète(s) mise(s) de côté** sur "
-        f"{len(df_all)} reçue(s) : elles ne sont comptées ni dans les {OBJECTIF_MENAGES} ménages "
-        f"ni dans les indicateurs ci-dessous. Détail et motifs dans l'onglet "
-        f"« ⏸️ Mises de côté »."
-    )
+jours_depuis_dernier = None
+if "ID02" in df_f.columns and not df_f.empty:
+    d_ = pd.to_datetime(df_f["ID02"], errors="coerce").dropna()
+    if len(d_):
+        jours_depuis_dernier = (pd.Timestamp(date.today()) - d_.max()).days
 
-# ------------------------------------------------------------------
-# NOTIFICATION : AIRES DE SANTÉ COMMENCÉES / PAS ENCORE COMMENCÉES
-# (toujours sur toute la base, indépendamment des filtres)
-# ------------------------------------------------------------------
 statut_as = statut_aires(df, df_incomplet)
-STYLE_STATUT = {   # (couleur de fond, couleur du texte, pictogramme)
-    "Pas commencée": ("#fbe3e3", "#8f2323", "⛔"),
-    "Commencée — incomplètes seulement": ("#fdeadf", "#8a3f1d", "⏸️"),
-    "À l'arrêt": ("#fff3d6", "#7a5500", "⚠️"),
-    "En cours": ("#e3f1fd", "#174f8c", "▶️"),
-    "Cible atteinte": ("#e1f5e1", "#0a5c0a", "✅"),
-}
-
-
-def puces_aires(tableau: pd.DataFrame) -> str:
-    puces = []
-    for _, r in tableau.iterrows():
-        fond, texte, picto = STYLE_STATUT[r["Statut"]]
-        detail = f"{r['Ménages évalués']} mén." if r["Statut"] != "Pas commencée" else "0"
-        puces.append(
-            f"<div style='background:{fond};color:{texte};border-radius:10px;padding:8px 10px;"
-            f"font-size:0.86rem;line-height:1.25'><b>{picto} {r['Aire de santé']}</b><br>"
-            f"<span style='font-size:0.78rem'>{r['Statut']} · {detail}</span></div>"
-        )
-    return ("<div style='display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));"
-            "gap:8px;margin:4px 0 10px 0'>" + "".join(puces) + "</div>")
-
-
 n_as = len(statut_as)
+STYLE_STATUT = {   # pictogramme, teinte (icône + libellé : jamais la couleur seule)
+    "Pas commencée": ("⛔", "red"),
+    "Commencée — incomplètes seulement": ("⏸️", "orange"),
+    "À l'arrêt": ("⚠️", "orange"),
+    "En cours": ("▶️", "blue"),
+    "Cible atteinte": ("✅", "green"),
+}
+LIBELLE_COURT = {"Pas commencée": "Pas commencées", "Commencée — incomplètes seulement": "Incomplètes seules",
+                 "À l'arrêt": "À l'arrêt", "En cours": "En cours", "Cible atteinte": "Cible atteinte"}
+COULEUR_STATUT = {"Pas commencée": theme.CRITICAL, "Commencée — incomplètes seulement": theme.SERIOUS,
+                  "À l'arrêt": theme.WARNING, "En cours": theme.ACCENT, "Cible atteinte": theme.GOOD}
 commencees = statut_as[statut_as["Statut"] != "Pas commencée"]
 pas_commencees = statut_as[statut_as["Statut"] == "Pas commencée"]
 incompletes_seules = statut_as[statut_as["Statut"] == "Commencée — incomplètes seulement"]
 a_l_arret = statut_as[statut_as["Statut"] == "À l'arrêt"]
 
-st.subheader(f"Aires de santé : {len(commencees)} / {n_as} ont commencé la collecte")
-if len(pas_commencees):
-    st.error(f"⛔ **{len(pas_commencees)} aire(s) de santé n'ont pas encore commencé** : "
-             + ", ".join(pas_commencees["Aire de santé"]) + ".")
-else:
-    st.success(f"✅ Les {n_as} aires de santé ont commencé la collecte.")
-if len(incompletes_seules):
-    st.warning("⏸️ Collecte commencée mais **aucune soumission complète** : "
-               + ", ".join(incompletes_seules["Aire de santé"])
-               + " — à corriger (voir l'onglet « ⏸️ Mises de côté »).")
-if len(a_l_arret):
-    st.warning(f"⚠️ **Aucune soumission depuis {JOURS_INACTIVITE_ALERTE} jours ou plus** : "
-               + ", ".join(f"{r['Aire de santé']} ({int(r['Jours sans soumission'])} j)"
-                           for _, r in a_l_arret.iterrows()) + ".")
-st.markdown(puces_aires(statut_as), unsafe_allow_html=True)
 
-col1, col2, col3, col4, col5, col6 = st.columns(6)
-col1.metric("Entretiens complets", qr["n_total"],
-            help="Formulaires complets (sélection filtrée), y compris non éligibles ou refus. "
-                 "Les soumissions incomplètes sont exclues.")
-col2.metric("Ménages évalués (sélection)", int(evaluated_mask(df_f).sum()) if not df_f.empty else 0)
-col3.metric("Éligibilité + consentement", f"{elig['taux_pct']} %" if elig["taux_pct"] is not None else "—")
-col4.metric("Doublons potentiels", qr["doublons_menage"])
-col5.metric("Durée moyenne", f"{qr['duree_moyenne_min']} min" if qr["duree_moyenne_min"] is not None else "—")
+def grille_aires(tableau: pd.DataFrame) -> str:
+    cases = []
+    for _, r in tableau.iterrows():
+        picto, teinte = STYLE_STATUT[r["Statut"]]
+        bg, fg = ui.TONES[teinte]
+        detail = f"{r['Ménages évalués']} ménage(s)" if r["Statut"] != "Pas commencée" else "aucune soumission"
+        cases.append(f"<div class='vs-as' style='background:{bg};color:{fg}'><b>{picto} "
+                     f"{ui.esc(r['Aire de santé'])}</b>{ui.esc(r['Statut'])} · {detail}</div>")
+    return "<div class='vs-as-grid'>" + "".join(cases) + "</div>"
 
-jours_depuis_dernier = None
-if "ID02" in df_f.columns and not df_f.empty:
-    dates_valides_f = pd.to_datetime(df_f["ID02"], errors="coerce").dropna()
-    if len(dates_valides_f):
-        jours_depuis_dernier = (pd.Timestamp(date.today()) - dates_valides_f.max()).days
-col6.metric(
-    "Jours depuis dernière soumission",
-    jours_depuis_dernier if jours_depuis_dernier is not None else "—",
-)
 
-if "N_FORMULAIRE" in df_f.columns and not df_f.empty:
-    st.caption(
-        f"🔢 Numérotation séquentielle (formulaire = ménage) attribuée après centralisation des "
-        f"soumissions — dernier numéro en date : **N° {int(df_all['N_FORMULAIRE'].max())}** sur "
-        f"l'ensemble de la base, soumissions mises de côté comprises (recalculée à chaque "
-        f"actualisation — voir §5 du README)."
-    )
-
-if prevalence is not None:
-    st.warning(
-        f"⚠️ Prévalence provisoire d'hésitation vaccinale sur les entretiens déjà saisis : "
-        f"**{prevalence} %**. Indicateur de suivi de terrain uniquement — **ne constitue pas un "
-        f"résultat scientifique du mémoire**. La règle de calcul de HESITATION et les scores "
-        f"composites (SCORE_CONNAISS, SCORE_CONFIANCE, etc.) seront calculés à l'analyse finale, "
-        f"une fois les {OBJECTIF_MENAGES} ménages atteints, conformément à l'Annexe 1 du questionnaire. "
-        f"Projection détaillée (IC95 %, bivariée, multivariée) dans l'onglet « 🔮 Projection des analyses »."
-    )
-
-st.divider()
-
-# ------------------------------------------------------------------
-# ONGLETS
-# ------------------------------------------------------------------
-tab_overview, tab_enq, tab_as, tab_proj, tab_quality, tab_inc, tab_data = st.tabs(
-    ["📈 Vue d'ensemble", "🧑‍🤝‍🧑 Par enquêteur", "📍 Par aire de santé",
-     "🔮 Projection des analyses", "✅ Qualité des données",
-     f"⏸️ Mises de côté ({len(df_inc_f)})", "📋 Données brutes"]
-)
-
-# --- Vue d'ensemble -------------------------------------------------
-with tab_overview:
-    st.subheader("Progression de la collecte dans le temps")
-    if "ID02" in df_f.columns and not df_f.empty:
-        tmp = df_f.copy()
-        tmp["ID02"] = pd.to_datetime(tmp["ID02"], errors="coerce")
-        tmp["_evalue"] = evaluated_mask(tmp).astype(int)
-        tmp = tmp.dropna(subset=["ID02"])
-        daily = tmp.groupby(tmp["ID02"].dt.date).agg(n=("ID02", "size"), ev=("_evalue", "sum")).reset_index()
-        daily.columns = ["Date", "Entretiens", "Évalués"]
-        daily["Cumulé"] = daily["Évalués"].cumsum()
-
-        fig = go.Figure()
-        fig.add_bar(x=daily["Date"], y=daily["Entretiens"], name="Entretiens / jour",
-                    marker_color=theme.ACCENT, marker_line_width=0,
-                    hovertemplate="%{x}<br>%{y} entretiens<extra></extra>")
-        fig.add_scatter(x=daily["Date"], y=daily["Cumulé"], name="Ménages évalués (cumulé)",
-                         mode="lines+markers",
-                         line=dict(color=theme.ACCENT_DARK, width=2),
-                         marker=dict(size=6), yaxis="y2",
-                         hovertemplate="%{x}<br>Ménages évalués cumulés : %{y}<extra></extra>")
-        # Ligne d'objectif (424 ménages) sur l'axe cumulé
-        fig.add_scatter(x=[daily["Date"].min(), daily["Date"].max()],
-                         y=[OBJECTIF_MENAGES, OBJECTIF_MENAGES],
-                         name=f"Objectif ({OBJECTIF_MENAGES} ménages)", mode="lines",
-                         line=dict(color=theme.CRITICAL, width=1.5, dash="dash"), yaxis="y2",
-                         hovertemplate=f"Objectif : {OBJECTIF_MENAGES} ménages<extra></extra>")
-        fig.update_layout(
-            yaxis=dict(title="Entretiens / jour"),
-            yaxis2=dict(title="Ménages évalués (cumulé)", overlaying="y", side="right",
-                        showgrid=False,
-                        range=[0, max(OBJECTIF_MENAGES, int(daily["Cumulé"].max())) * 1.08]),
-            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0),
-        )
-        theme.apply_layout(fig, height=360, show_legend=True)
-        st.plotly_chart(fig, use_container_width=True, key="chart_trend_global")
+def alertes_aires() -> None:
+    if len(pas_commencees):
+        st.error(f"**{len(pas_commencees)} aire(s) de santé n'ont pas encore commencé la collecte** : "
+                 + ", ".join(pas_commencees["Aire de santé"]) + ".", icon="⛔")
     else:
-        st.info("Champ ID02 (date d'entretien) absent des données chargées.")
+        st.success(f"Les {n_as} aires de santé ont commencé la collecte.", icon="✅")
+    if len(incompletes_seules):
+        st.warning("Collecte commencée mais **aucune soumission complète** : "
+                   + ", ".join(incompletes_seules["Aire de santé"]) + " — voir « Mises de côté ».", icon="⏸️")
+    if len(a_l_arret):
+        st.warning(f"**Aucune soumission depuis {JOURS_INACTIVITE_ALERTE} jours ou plus** : "
+                   + ", ".join(f"{r['Aire de santé']} ({int(r['Jours sans soumission'])} j)"
+                               for _, r in a_l_arret.iterrows()) + ".", icon="⚠️")
 
-    c1, c2 = st.columns(2)
-    with c1:
-        st.subheader("Entretiens par aire de santé")
-        if "ID04" in df_f.columns and not df_f.empty:
-            counts = df_f["ID04"].value_counts().rename_axis("ID04").reset_index(name="n")
-            counts["Aire de santé"] = counts["ID04"].map(AIRES_SANTE).fillna(counts["ID04"])
-            counts = counts.sort_values("n", ascending=True)
+
+
+@contextmanager
+def garde(nom: str):
+    """Confine une erreur à la page (ou à la sous-partie) concernée."""
+    try:
+        yield
+    except Exception:  # noqa: BLE001
+        st.error(f"« {nom} » n'a pas pu s'afficher entièrement, probablement à cause d'une donnée inattendue "
+                 "dans l'export. Les autres pages restent disponibles.", icon="🛠️")
+        with st.expander("Détail technique (à transmettre au gestionnaire du tableau de bord)"):
+            st.code(traceback.format_exc())
+
+
+def carte(cle: str):
+    """Conteneur stylé en carte blanche (classe CSS st-key-card_…)."""
+    return st.container(key=f"card_{cle}")
+
+
+def bandeau_filtres() -> None:
+    if filtres_actifs or date_min is not None:
+        st.caption("Filtres du menu appliqués à cette page.")
+
+
+# ==================================================================
+# PAGES
+# ==================================================================
+def page_tableau_de_bord() -> None:
+    maj = datetime.now().strftime("%d/%m/%Y à %H:%M")
+    ui.page_header("Collecte — ZS Lemba", "Hésitation vaccinale 0-23 mois",
+                   f"Parents/tuteurs d'enfants de 0 à 23 mois · {n_as} aires de santé · mis à jour le {maj}",
+                   svg_b64())
+
+    # Frise des phases du mémoire
+    ui.stepper([
+        {"label": "Protocole approuvé", "detail": "IFRISSE", "state": "done"},
+        {"label": "Pré-test terminé", "detail": "Questionnaire ajusté", "state": "done"},
+        {"label": "Collecte en cours", "detail": f"{n_evalues}/{OBJECTIF_MENAGES} · {fr(taux_avancement)} %",
+         "state": "current", "icon": "⏳"},
+        {"label": "Analyse SPSS", "detail": "Après 424 ménages", "state": "todo", "icon": "📊"},
+        {"label": "Soutenance", "detail": "À venir", "state": "todo", "icon": "🎓"},
+    ])
+
+    c1, c2, c3 = st.columns([1.05, 1, 1.1], gap="medium")
+    # --- Avancement
+    with c1, carte("avancement"):
+        ui.card_title("Avancement vers l'objectif", "toute la base")
+        st.markdown(
+            f"<div class='vs-big'>{n_evalues} <small>/ {OBJECTIF_MENAGES} ménages</small></div>"
+            f"<div class='vs-bar'><div style='width:{min(taux_avancement, 100):.1f}%'></div></div>"
+            f"<div class='vs-muted'>{fr(taux_avancement)} % de l'objectif · ménages éligibles et consentants</div>"
+            f"<div class='vs-row'><div><span>Restants</span><b>{n_restants}</b></div>"
+            f"<div><span>Rythme moyen</span><b>{fr(rythme_jour) if rythme_jour else '—'} / jour</b></div>"
+            f"<div><span>Fin estimée</span><b>{f'≈ {jours_restants} j' if jours_restants else '—'}</b></div></div>",
+            unsafe_allow_html=True)
+        if len(df_incomplet):
+            st.markdown(f"<div class='vs-muted' style='margin-top:10px'>⏸️ {len(df_incomplet)} soumission(s) "
+                        f"incomplète(s) mise(s) de côté, non comptée(s).</div>", unsafe_allow_html=True)
+        if not champs_elig_presents:
+            st.caption("Champs A01/A02/A04 absents : tous les formulaires sont comptés.")
+
+    # --- Anneau des aires de santé
+    with c2, carte("aires_anneau"):
+        ui.card_title("Aires de santé", f"{len(commencees)} / {n_as} commencées")
+        comptes = statut_as["Statut"].value_counts()
+        ordre = [s for s in STYLE_STATUT if s in comptes.index]
+        g1, g2 = st.columns([0.85, 1.3], vertical_alignment="center")
+        with g1:
+            fig = go.Figure(go.Pie(
+                labels=ordre, values=[int(comptes[s]) for s in ordre], hole=0.68, sort=False,
+                marker=dict(colors=[COULEUR_STATUT[s] for s in ordre], line=dict(color="#ffffff", width=2)),
+                textinfo="none", hovertemplate="%{label} : %{value} AS<extra></extra>"))
+            fig.add_annotation(text=f"<b style='font-size:22px'>{len(commencees)}</b><br>"
+                                    f"<span style='font-size:11px'>sur {n_as}</span>",
+                               showarrow=False, font=dict(color=theme.TEXT))
+            theme.apply_layout(fig, height=170)
+            fig.update_layout(margin=dict(l=0, r=0, t=0, b=0))
+            st.plotly_chart(fig, width="stretch", config=PLOTLY_CONFIG, key="donut_as")
+        with g2:
+            st.markdown("".join(
+                f"<div style='display:flex;justify-content:space-between;font-size:0.82rem;padding:3px 0'>"
+                f"<span><span style='color:{COULEUR_STATUT[s]}'>●</span> {STYLE_STATUT[s][0]} {ui.esc(LIBELLE_COURT[s])}</span>"
+                f"<b>{int(comptes[s])}</b></div>" for s in ordre), unsafe_allow_html=True)
+        st.markdown("<span class='vs-link'>Détail : page « Aires de santé » →</span>", unsafe_allow_html=True)
+
+    # --- Activité quotidienne
+    with c3, carte("activite"):
+        jours = (pd.to_datetime(df.loc[masque_eval, "ID02"], errors="coerce").dropna().dt.normalize()
+                 if "ID02" in df.columns else pd.Series(dtype="datetime64[ns]"))
+        if len(jours):
+            # 14 jours se terminant aujourd'hui (ou au dernier jour d'activité s'il est plus ancien)
+            aujourd_hui = pd.Timestamp(date.today()).normalize()
+            fin = aujourd_hui if jours.max() >= aujourd_hui - pd.Timedelta(days=13) else jours.max()
+            axe = pd.date_range(fin - pd.Timedelta(days=13), fin, freq="D")
+            par_jour = jours.value_counts().reindex(axe, fill_value=0)
+            sem, sem_prec = int(par_jour.iloc[-7:].sum()), int(par_jour.iloc[:7].sum())
+            evol = (f"{'+' if sem >= sem_prec else ''}{fr((sem - sem_prec) / sem_prec * 100, 0)} % vs 7 j précédents"
+                    if sem_prec else "")
+            ui.card_title("Activité", f"ménages évalués · 14 j au {fin.strftime('%d/%m')}")
+            st.markdown(f"<div class='vs-big'>{sem} <small>sur 7 jours</small></div>"
+                        f"<div class='vs-muted'>{evol}</div>", unsafe_allow_html=True)
             fig = go.Figure(go.Bar(
-                x=counts["n"], y=counts["Aire de santé"], orientation="h",
-                text=counts["n"], textposition="outside",
-                marker_color=theme.ACCENT, marker_line_width=0,
-                hovertemplate="%{y} : %{x} entretiens<extra></extra>",
-            ))
-            fig.update_xaxes(title="Entretiens")
-            theme.apply_layout(fig, height=420)
-            st.plotly_chart(fig, use_container_width=True, key="chart_overview_par_as")
+                x=axe, y=par_jour.values, marker_color=theme.ACCENT, marker_line_width=0,
+                marker_cornerradius=4,
+                hovertemplate="%{x|%d/%m} : %{y} ménage(s)<extra></extra>"))
+            theme.apply_layout(fig, height=120)
+            fig.update_layout(margin=dict(l=0, r=0, t=6, b=0), bargap=0.35)
+            fig.update_xaxes(showgrid=False, tickformat="%d/%m", nticks=7, tickfont=dict(size=10))
+            fig.update_yaxes(showgrid=False, visible=False)
+            st.plotly_chart(fig, width="stretch", config=PLOTLY_CONFIG, key="mini_activite")
         else:
-            st.info("Champ ID04 (aire de santé) absent des données chargées.")
+            ui.card_title("Activité — ménages évalués")
+            st.info("Pas encore de date d'entretien (ID02).")
 
-    with c2:
-        st.subheader("Entretiens par enquêteur")
+    # --- Alertes aires de santé + grille
+    with carte("aires_statut"):
+        ui.card_title(f"Statut des {n_as} aires de santé", "notification")
+        alertes_aires()
+        st.markdown(grille_aires(statut_as), unsafe_allow_html=True)
+
+    # --- Progression cumulée + dernières soumissions
+    d1, d2 = st.columns([1.7, 1], gap="medium")
+    with d1, carte("cumul"):
+        ui.card_title("Progression cumulée vers les 424 ménages", "un seul axe : ménages évalués")
+        if len(dates_eval):
+            cum = dates_eval.dt.normalize().value_counts().sort_index().cumsum()
+            fig = go.Figure()
+            fig.add_scatter(x=cum.index, y=cum.values, mode="lines+markers", name="Ménages évalués (cumul)",
+                            line=dict(color=theme.ACCENT_DARK, width=2), marker=dict(size=8),
+                            fill="tozeroy", fillcolor="rgba(42,120,214,0.08)",
+                            hovertemplate="%{x|%d/%m/%Y}<br>%{y} ménages évalués<extra></extra>")
+            fig.add_hline(y=OBJECTIF_MENAGES, line_dash="dash", line_color=theme.CRITICAL, line_width=1.5)
+            fig.add_annotation(x=cum.index.min(), y=OBJECTIF_MENAGES, yanchor="bottom", xanchor="left",
+                               text=f"Objectif : {OBJECTIF_MENAGES} ménages", showarrow=False,
+                               font=dict(color=theme.CRITICAL, size=12))
+            fig.update_yaxes(range=[0, max(OBJECTIF_MENAGES, int(cum.max())) * 1.1], title="Ménages évalués")
+            fig.update_xaxes(tickformat="%d/%m")
+            theme.apply_layout(fig, height=300)
+            st.plotly_chart(fig, width="stretch", config=PLOTLY_CONFIG, key="cumul")
+        else:
+            st.info("Champ ID02 (date d'entretien) absent ou vide.")
+
+    with d2, carte("fil"):
+        ui.card_title("Dernières soumissions", "toutes sources")
+        tri = df_all.copy()
+        col_tri = next((c for c in ["_submission_time", "end", "ID02"] if c in tri.columns), None)
+        if col_tri:
+            tri["_t"] = pd.to_datetime(tri[col_tri], errors="coerce")
+            tri = tri.sort_values("_t", ascending=False, na_position="last")
+        ids_inc = set(df_incomplet.index)
+        elements = []
+        for idx, r in tri.head(6).iterrows():
+            aire = AIRES_SANTE.get(r.get("ID04"), r.get("ID04")) if pd.notna(r.get("ID04")) else "AS ?"
+            enq = ENQUETEURS.get(r.get("ID03"), r.get("ID03")) if pd.notna(r.get("ID03")) else "enquêteur ?"
+            quand = pd.to_datetime(r.get("ID02"), errors="coerce")
+            quand_txt = quand.strftime("%d/%m/%Y") if pd.notna(quand) else "date ?"
+            if idx in ids_inc:
+                ton, ic, etat = "orange", "!", "mise de côté"
+            elif bool(evaluated_mask(tri.loc[[idx]]).iloc[0]):
+                ton, ic, etat = "green", "✓", "ménage évalué"
+            else:
+                ton, ic, etat = "grey", "–", "non éligible / refus"
+            elements.append({"titre": f"Ménage N° {r.get('N_FORMULAIRE', '?')} · {aire}",
+                             "detail": f"{ui.esc(enq)} · {quand_txt} · {etat}", "tone": ton, "icon": ic})
+        ui.timeline(elements)
+
+    # --- Indicateurs de qualité et prévalence provisoire
+    k = st.columns(5, gap="small")
+    blocs = [
+        ("Entretiens complets", qr["n_total"], "sélection filtrée", "📝", "blue"),
+        ("Éligibilité + consentement", f"{fr(elig['taux_pct'])} %" if elig["taux_pct"] is not None else "—",
+         "A01 = A02 = A04 = 1", "🤝", "green"),
+        ("Doublons potentiels", qr["doublons_menage"], "même aire + quartier + enfant", "🔁",
+         "red" if qr["doublons_menage"] else "grey"),
+        ("Durée moyenne", f"{fr(qr['duree_moyenne_min'])} min" if qr["duree_moyenne_min"] is not None else "—",
+         f"{qr['entretiens_courts_lt5min'] or 0} entretien(s) < 5 min", "⏱️", "violet"),
+        ("Dernière soumission", f"il y a {jours_depuis_dernier} j" if jours_depuis_dernier is not None else "—",
+         "sélection filtrée", "📅",
+         "orange" if (jours_depuis_dernier or 0) >= JOURS_INACTIVITE_ALERTE else "blue"),
+    ]
+    for col, (lab, val, sub, ic, ton) in zip(k, blocs):
+        with col, carte(f"kpi_{ic}"):
+            st.markdown(ui.kpi(lab, val, sub, ic, ton), unsafe_allow_html=True)
+
+    if prevalence is not None:
+        with carte("prev"):
+            ui.card_title("Prévalence provisoire de l'hésitation vaccinale", ui.pill("provisoire", "orange"))
+            st.markdown(
+                f"<div class='vs-big'>{fr(prevalence)} %</div><div class='vs-muted'>Sur les ménages évalués déjà "
+                f"saisis (sélection filtrée). Indicateur de suivi de terrain — <b>pas un résultat du mémoire</b> : "
+                f"la règle de calcul de HESITATION et les scores composites seront fixés à l'analyse finale. "
+                f"IC95 %, analyses bivariée et multivariée : page « Projection des analyses ».</div>",
+                unsafe_allow_html=True)
+
+    ui.feature_strip()
+
+
+def page_aires_de_sante() -> None:
+    ui.page_header("Aires de santé", f"{len(commencees)} / {n_as} commencées",
+                   "Statut de démarrage et avancement de la collecte dans chaque aire de santé (toute la base).")
+    with carte("as_alertes"):
+        alertes_aires()
+        st.markdown(grille_aires(statut_as), unsafe_allow_html=True)
+    with carte("as_table"):
+        ui.card_title("Tableau de statut", "filtres non appliqués")
+        st.caption("« Pas commencée » : aucune soumission ; « Commencée — incomplètes seulement » : uniquement "
+                   f"des soumissions mises de côté ; « À l'arrêt » : rien depuis {JOURS_INACTIVITE_ALERTE} jours ou "
+                   "plus. Les cibles par AS (allocation proportionnelle, § 3.4.3) s'afficheront une fois "
+                   "renseignées dans `ALLOCATION_AS` (data_quality.py).")
+        ordre = list(STYLE_STATUT)
+        vue = statut_as.assign(_o=statut_as["Statut"].map(ordre.index)).sort_values(["_o", "Aire de santé"])
+        vue = vue.drop(columns=["_o", "Code"])
+        vue = vue.astype(object).where(vue.notna(), "—").astype(str)
+        st.dataframe(vue, hide_index=True, width="stretch", height=38 + 35 * len(vue),
+                     column_config={"Statut": st.column_config.TextColumn(width="large"),
+                                    "Aire de santé": st.column_config.TextColumn(width="medium")})
+    with carte("as_bar"):
+        ui.card_title("Ménages évalués par aire de santé")
+        t = statut_as.sort_values("Ménages évalués")
+        fig = go.Figure(go.Bar(
+            x=t["Ménages évalués"], y=t["Aire de santé"], orientation="h", text=t["Ménages évalués"],
+            textposition="outside", marker_color=theme.ACCENT, marker_line_width=0, marker_cornerradius=4,
+            hovertemplate="%{y} : %{x} ménage(s) évalué(s)<extra></extra>"))
+        fig.update_xaxes(title="Ménages évalués")
+        theme.apply_layout(fig, height=60 + 28 * len(t))
+        st.plotly_chart(fig, width="stretch", config=PLOTLY_CONFIG, key="as_bar_chart")
+    with carte("as_detail"):
+        ui.card_title("Détail par aire de santé", "sélection filtrée")
+        detail_as = summary_by_aire(df_f)
+        if not detail_as.empty:
+            st.dataframe(detail_as, hide_index=True, width="stretch")
+        else:
+            st.info("Aucune donnée à détailler pour la sélection actuelle.")
+
+
+def page_enqueteurs() -> None:
+    ui.page_header("Enquêteurs", f"{len(ENQUETEURS)} enquêteurs",
+                   "Rythme de soumission et qualité par enquêteur (sélection filtrée).")
+    with carte("enq_bar"):
+        ui.card_title("Entretiens complets par enquêteur")
         if "ID03" in df_f.columns and not df_f.empty:
             counts = df_f["ID03"].value_counts().rename_axis("ID03").reset_index(name="n")
             counts["Enquêteur"] = counts["ID03"].map(ENQUETEURS).fillna(counts["ID03"])
             counts = counts.sort_values("n", ascending=True)
             fig = go.Figure(go.Bar(
-                x=counts["n"], y=counts["Enquêteur"], orientation="h",
-                text=counts["n"], textposition="outside",
-                marker_color=theme.ACCENT, marker_line_width=0,
-                hovertemplate="%{y} : %{x} entretiens<extra></extra>",
-            ))
+                x=counts["n"], y=counts["Enquêteur"], orientation="h", text=counts["n"], textposition="outside",
+                marker_color=theme.ACCENT, marker_line_width=0, marker_cornerradius=4,
+                hovertemplate="%{y} : %{x} entretiens<extra></extra>"))
             fig.update_xaxes(title="Entretiens")
-            theme.apply_layout(fig, height=420)
-            st.plotly_chart(fig, use_container_width=True, key="chart_overview_par_enq")
+            theme.apply_layout(fig, height=60 + 30 * len(counts))
+            st.plotly_chart(fig, width="stretch", config=PLOTLY_CONFIG, key="enq_bar_chart")
         else:
             st.info("Champ ID03 (code enquêteur) absent des données chargées.")
+    with carte("enq_heat"):
+        ui.card_title("Tendance des soumissions par enquêteur", "jour × enquêteur")
+        mat = submission_trend_matrix(df_f)
+        if not mat.empty:
+            st.caption("Nombre d'entretiens soumis par enquêteur et par jour : jours actifs, écarts et ruptures de rythme.")
+            fig = go.Figure(go.Heatmap(
+                z=mat.values.T, x=[d.strftime("%d/%m") for d in mat.index], y=mat.columns.tolist(),
+                colorscale=theme.blue_colorscale(), colorbar=dict(title="Entretiens", outlinewidth=0),
+                hovertemplate="%{y} — %{x}<br>%{z} entretien(s)<extra></extra>", xgap=2, ygap=2))
+            fig.update_xaxes(title="Date", type="category")
+            theme.apply_layout(fig, height=120 + 28 * len(mat.columns))
+            st.plotly_chart(fig, width="stretch", config=PLOTLY_CONFIG, key="enq_heatmap")
+        else:
+            st.info("Pas assez de données (ID02/ID03) pour tracer la tendance par enquêteur.")
+    with carte("enq_detail"):
+        ui.card_title("Détail par enquêteur")
+        detail_enq = summary_by_enqueteur(df_f)
+        if not detail_enq.empty:
+            st.dataframe(detail_enq, hide_index=True, width="stretch")
+        else:
+            st.info("Aucune donnée à détailler pour la sélection actuelle.")
 
-# --- Par enquêteur ----------------------------------------------------
-with tab_enq:
-    st.subheader("Tendance des soumissions par enquêteur")
-    mat = submission_trend_matrix(df_f)
-    if not mat.empty:
-        st.caption(
-            "Chaque case indique le nombre d'entretiens soumis par cet enquêteur ce jour-là — "
-            "lecture rapide des jours actifs, des écarts et des ruptures de rythme par personne."
-        )
-        fig = go.Figure(go.Heatmap(
-            z=mat.values.T,
-            x=[d.isoformat() for d in mat.index],
-            y=mat.columns.tolist(),
-            colorscale=theme.blue_colorscale(),
-            colorbar=dict(title="Entretiens", outlinewidth=0),
-            hovertemplate="%{y} — %{x}<br>%{z} entretien(s)<extra></extra>",
-            xgap=2, ygap=2,
-        ))
-        fig.update_xaxes(title="Date", type="category")
-        fig.update_yaxes(title="")
-        theme.apply_layout(fig, height=120 + 28 * len(mat.columns))
-        st.plotly_chart(fig, use_container_width=True, key="chart_heatmap_enq")
-    else:
-        st.info("Pas assez de données (ID02/ID03) pour tracer la tendance par enquêteur.")
 
-    st.subheader("Détail par enquêteur")
-    detail_enq = summary_by_enqueteur(df_f)
-    if not detail_enq.empty:
-        st.dataframe(detail_enq, hide_index=True, use_container_width=True)
-    else:
-        st.info("Aucune donnée à détailler pour la sélection actuelle.")
-
-# --- Par aire de santé --------------------------------------------------
-with tab_as:
-    st.subheader(f"Statut de la collecte dans les {n_as} aires de santé")
-    st.caption(
-        "Sur toute la base (filtres non appliqués). « Pas commencée » : aucune soumission ; "
-        "« Commencée — incomplètes seulement » : uniquement des soumissions mises de côté ; "
-        f"« À l'arrêt » : rien depuis {JOURS_INACTIVITE_ALERTE} jours ou plus. Les cibles par AS "
-        "(allocation proportionnelle du mémoire, § 3.4.3) s'afficheront une fois renseignées dans "
-        "`ALLOCATION_AS` (data_quality.py)."
-    )
-    ordre = list(STYLE_STATUT)
-    vue_statut = statut_as.assign(_o=statut_as["Statut"].map(ordre.index)).sort_values(["_o", "Aire de santé"])
-    vue_statut = vue_statut.drop(columns=["_o", "Code"])
-    vue_statut = vue_statut.astype(object).where(vue_statut.notna(), "—").astype(str)
-    st.dataframe(vue_statut, hide_index=True, use_container_width=True,
-                 height=38 + 35 * len(vue_statut),
-                 column_config={"Statut": st.column_config.TextColumn(width="large"),
-                                "Aire de santé": st.column_config.TextColumn(width="medium")})
-
-    st.subheader("Détail par aire de santé (sélection filtrée)")
-    detail_as = summary_by_aire(df_f)
-    if not detail_as.empty:
-        st.dataframe(detail_as, hide_index=True, use_container_width=True)
-
-        fig = go.Figure(go.Bar(
-            x=detail_as.sort_values("Entretiens")["Entretiens"],
-            y=detail_as.sort_values("Entretiens")["Aire de santé"],
-            orientation="h", text=detail_as.sort_values("Entretiens")["Entretiens"],
-            textposition="outside", marker_color=theme.ACCENT, marker_line_width=0,
-            hovertemplate="%{y} : %{x} entretiens<extra></extra>",
-        ))
-        fig.update_xaxes(title="Entretiens")
-        theme.apply_layout(fig, height=420)
-        st.plotly_chart(fig, use_container_width=True, key="chart_detail_par_as")
-    else:
-        st.info("Aucune donnée à détailler pour la sélection actuelle.")
-
-# --- Projection des analyses du mémoire ------------------------------------
 def _graphe_forest(tab: pd.DataFrame, col_or: str, titre_x: str, key: str) -> None:
-    t = tab.dropna(subset=[col_or, "IC bas", "IC haut"]).iloc[::-1]
+    t = tab.replace([float("inf"), float("-inf")], float("nan")).dropna(subset=[col_or, "IC bas", "IC haut"])
+    if "Terme" in t.columns and "ORa [IC95 %]" in t.columns:
+        t = t[t["ORa [IC95 %]"] != "instable"]
+    t = t.iloc[::-1]
     if t.empty:
         return
     fig = go.Figure(go.Scatter(
@@ -516,11 +575,12 @@ def _graphe_forest(tab: pd.DataFrame, col_or: str, titre_x: str, key: str) -> No
     fig.add_vline(x=1, line_dash="dash", line_color=theme.INK_MUTED)
     fig.update_xaxes(type="log", title=titre_x)
     theme.apply_layout(fig, height=110 + 34 * len(t))
-    st.plotly_chart(fig, use_container_width=True, key=key)
+    st.plotly_chart(fig, width="stretch", config=PLOTLY_CONFIG, key=key)
 
 
-with tab_proj:
-    st.subheader("Projection des analyses statistiques du mémoire (§ 3.9)")
+def page_projection() -> None:
+    ui.page_header("Projection des analyses", "provisoire",
+                   "Analyses prévues au § 3.9 du mémoire, recalculées sur les données déjà reçues.")
     st.warning(
         "🔮 **Résultats provisoires**, recalculés à chaque actualisation sur les soumissions complètes "
         "déjà reçues (et selon les filtres actifs). Ils donnent une **tendance** de ce que montreront les "
@@ -545,7 +605,7 @@ with tab_proj:
                                        "Ponctualité vaccinale"])
 
         # Objectif 1 ---------------------------------------------------------
-        with p1:
+        with p1, garde("Objectif 1"):
             pv = AN.prevalence(base)
             prec_now = AN.precision_projetee(pv["p"], pv["n"])
             prec_424 = AN.precision_projetee(pv["p"], OBJECTIF_MENAGES)
@@ -587,12 +647,12 @@ with tab_proj:
                 fig.update_xaxes(title="Prévalence de l'hésitation (%)", range=[0, 100])
                 theme.apply_layout(fig, height=140 + 30 * len(t))
                 fig.update_layout(margin=dict(t=36))
-                st.plotly_chart(fig, use_container_width=True, key="chart_prev_as")
+                st.plotly_chart(fig, width="stretch", config=PLOTLY_CONFIG, key="chart_prev_as")
                 st.dataframe(par_as.rename(columns={"Modalité": "Aire de santé"}), hide_index=True,
-                             use_container_width=True)
+                             width="stretch")
 
         # Objectifs 2 à 4 ----------------------------------------------------
-        with p2:
+        with p2, garde("Objectifs 2 à 4"):
             st.caption("Variables qualitatives : effectifs et % ; quantitatives : moyenne ± ET si la "
                        "distribution est symétrique (|asymétrie| < 1), sinon médiane [IQR] (§ 3.9.1).")
             choix_desc = st.multiselect("Variables à décrire", vars_qual + vars_quant,
@@ -610,12 +670,12 @@ with tab_proj:
                         t = AN.descriptif_qualitatif(base, v)
                         if v == "ID04":
                             t["Modalité"] = t["Modalité"].map(lambda m: AIRES_SANTE.get(m, m))
-                        st.dataframe(t, hide_index=True, use_container_width=True)
+                        st.dataframe(t, hide_index=True, width="stretch")
             if not choix_desc:
                 st.info("Aucune variable descriptive détectée dans l'export.")
 
         # Objectif 5 ---------------------------------------------------------
-        with p5:
+        with p5, garde("Analyse bivariée"):
             st.caption("Chi² de Pearson, ou test exact de Fisher si un effectif attendu < 5 dans un "
                        "tableau 2×2 ; t de Student (Welch) ou Mann-Whitney pour les variables quantitatives ; "
                        "ORb avec IC95 % (Woolf), modalité la plus fréquente en référence (§ 3.9.2).")
@@ -631,14 +691,14 @@ with tab_proj:
                 vue = synth_bi.assign(Variable=synth_bi["Variable"].map(nom_var),
                                       p=synth_bi["p"].map(AN.fmt_p))
                 vue = vue[[c for c in vue.columns if c != "Remarque"] + ["Remarque"]]
-                st.dataframe(vue, hide_index=True, use_container_width=True)
+                st.dataframe(vue, hide_index=True, width="stretch")
                 st.markdown("**Détail par modalité**")
-                st.dataframe(detail_bi, hide_index=True, use_container_width=True)
+                st.dataframe(detail_bi, hide_index=True, width="stretch")
             else:
                 st.info("Choisir au moins un facteur.")
 
         # Objectif 6 ---------------------------------------------------------
-        with p6:
+        with p6, garde("Régression logistique"):
             st.caption("Régression logistique binaire multivariée : ORa avec IC95 % et p ; colinéarité "
                        "(VIF) ; adéquation par le test de Hosmer-Lemeshow (§ 3.9.3). Par défaut, les "
                        "facteurs présélectionnés à p < 0,20 ; ajoutez les variables d'intérêt conceptuel.")
@@ -669,11 +729,16 @@ with tab_proj:
                                    f"{OBJECTIF_MENAGES} ménages.")
                     coef = res["coefficients"]
                     st.dataframe(coef[["Terme", "ORa [IC95 %]", "p (affiché)"]].rename(columns={"p (affiché)": "p"}),
-                                 hide_index=True, use_container_width=True)
+                                 hide_index=True, width="stretch")
                     st.caption("Références : " + "; ".join(f"{nom_var(k)} = {v}" for k, v in res["references"].items())
                                if res["references"] else "")
                     _graphe_forest(coef, "ORa", "Odds Ratio ajusté (échelle log, IC95 %)", "chart_forest_ora")
-                    sig = coef[coef["p"] < AN.SEUIL_SIGNIF]
+                    if res.get("instables"):
+                        st.warning("Estimation instable (séparation quasi complète : une modalité ne contient "
+                                   "presque que des hésitants ou des non-hésitants) pour : "
+                                   + ", ".join(res["instables"]) + ". Regrouper ces modalités ou attendre "
+                                   "davantage de données.", icon="⚠️")
+                    sig = coef[(coef["p"] < AN.SEUIL_SIGNIF) & (coef["ORa [IC95 %]"] != "instable")]
                     if len(sig):
                         st.markdown("**Facteurs provisoirement associés (p < 0,05)** : " + "; ".join(
                             f"{r['Terme']} (ORa {r['ORa [IC95 %]']})" for _, r in sig.iterrows()) + ".")
@@ -684,7 +749,7 @@ with tab_proj:
                                + ("" if res["converge"] else " — ⚠️ le modèle n'a pas convergé."))
 
         # Ponctualité ----------------------------------------------------------
-        with pp:
+        with pp, garde("Ponctualité vaccinale"):
             st.caption(
                 f"Retard si la dose est administrée plus de {AN.DELAI_GRACE_JOURS} jours après l'âge "
                 "recommandé (BCG : naissance ; Penta 1 : 6 semaines ; Penta 3 : 14 semaines ; VAR 1 : 9 mois), "
@@ -697,110 +762,217 @@ with tab_proj:
                         + ". Si les dates portent d'autres codes, les adapter dans `analyses.py` "
                           "(CHAMP_DATE_NAISSANCE, DOSES_PONCTUALITE).")
             if not tab_ponct.empty:
-                st.dataframe(tab_ponct, hide_index=True, use_container_width=True)
+                st.dataframe(tab_ponct, hide_index=True, width="stretch")
 
-# --- Qualité des données --------------------------------------------
-with tab_quality:
-    st.subheader("Qualité des données")
-    qc1, qc2 = st.columns(2)
 
-    with qc1:
-        st.markdown("**Valeurs manquantes sur les champs clés (%)**")
+def page_qualite() -> None:
+    ui.page_header("Qualité des données", "contrôle de terrain",
+                   "Complétude, doublons, durées d'entretien et alertes (soumissions complètes, sélection filtrée).")
+    if df_f.empty:
+        st.info("Aucune soumission complète pour la sélection actuelle. Vérifiez les filtres du menu, ou la page "
+                f"« Mises de côté » ({len(df_incomplet)} soumission(s) incomplète(s)).")
+        return
+
+    k = st.columns(5, gap="small")
+    blocs = [
+        ("Entretiens complets", qr["n_total"], "sélection filtrée", "📝", "blue"),
+        ("Doublons potentiels", qr["doublons_menage"], "même aire + quartier + enfant", "🔁",
+         "red" if qr["doublons_menage"] else "green"),
+        ("Entretiens < 5 min", qr["entretiens_courts_lt5min"] if qr["entretiens_courts_lt5min"] is not None else "—",
+         "à vérifier avec l'enquêteur", "⏱️", "orange" if qr["entretiens_courts_lt5min"] else "green"),
+        ("Durée médiane", f"{fr(qr['duree_mediane_min'])} min" if qr["duree_mediane_min"] is not None else "—",
+         f"moyenne {fr(qr['duree_moyenne_min'])} min" if qr["duree_moyenne_min"] is not None else "", "⌛", "violet"),
+        ("Mises de côté", len(df_inc_f), "soumissions incomplètes", "⏸️", "orange" if len(df_inc_f) else "green"),
+    ]
+    for col, (lab, val, sub, ic, ton) in zip(k, blocs):
+        with col, carte(f"q_kpi_{ic}"):
+            st.markdown(ui.kpi(lab, val, sub, ic, ton), unsafe_allow_html=True)
+
+    q1, q2 = st.columns(2, gap="medium")
+    with q1, carte("q_manquants"):
+        ui.card_title("Valeurs manquantes sur les champs clés", "% des soumissions complètes")
         if qr["missing_by_field"]:
-            miss_df = pd.DataFrame(list(qr["missing_by_field"].items()), columns=["Champ", "% manquant"])
-            st.dataframe(miss_df, hide_index=True, use_container_width=True)
+            miss = pd.DataFrame(list(qr["missing_by_field"].items()), columns=["Champ", "% manquant"])
+            miss["% manquant"] = miss["% manquant"].astype(float).round(1)
+            miss = miss.sort_values("% manquant")
+            fig = go.Figure(go.Bar(
+                x=miss["% manquant"], y=miss["Champ"], orientation="h", marker_color=theme.ACCENT,
+                marker_line_width=0, marker_cornerradius=4, text=miss["% manquant"].map(lambda v: f"{fr(v)} %"),
+                textposition="outside", hovertemplate="%{y} : %{x:.1f} % manquant<extra></extra>"))
+            fig.update_xaxes(range=[0, max(100, float(miss["% manquant"].max()) * 1.15)], title="% manquant")
+            theme.apply_layout(fig, height=70 + 34 * len(miss))
+            st.plotly_chart(fig, width="stretch", config=PLOTLY_CONFIG, key="q_miss")
+            st.caption("Un champ peut être vide normalement à cause d'un saut logique (ex. section non posée "
+                       "aux ménages non éligibles).")
         else:
             st.info("Champs clés non trouvés dans l'export.")
 
-    with qc2:
-        st.markdown("**Alertes de terrain**")
+    with q2, carte("q_alertes"):
+        ui.card_title("Alertes de terrain")
         alerts = []
         if qr["doublons_menage"]:
-            alerts.append(f"🔴 {qr['doublons_menage']} doublon(s) potentiel(s) de ménage (même aire + quartier + repère enfant).")
+            alerts.append(("error", f"{qr['doublons_menage']} doublon(s) potentiel(s) de ménage "
+                                    "(même aire + quartier + repère enfant) — liste ci-dessous."))
         if qr["entretiens_courts_lt5min"]:
-            alerts.append(f"🟠 {qr['entretiens_courts_lt5min']} entretien(s) de moins de 5 minutes — à vérifier.")
+            alerts.append(("warning", f"{qr['entretiens_courts_lt5min']} entretien(s) de moins de 5 minutes — à vérifier."))
         if elig.get("taux_pct") is not None and elig["taux_pct"] < 50:
-            alerts.append(f"🟠 Taux d'éligibilité/consentement faible ({elig['taux_pct']} %) — vérifier le recrutement sur le terrain.")
+            alerts.append(("warning", f"Taux d'éligibilité/consentement faible ({fr(elig['taux_pct'])} %) — "
+                                      "vérifier le recrutement sur le terrain."))
         if len(df_inc_f):
-            alerts.append(f"🟠 {len(df_inc_f)} soumission(s) incomplète(s) mise(s) de côté — voir l'onglet « ⏸️ Mises de côté ».")
-        if jours_depuis_dernier is not None and jours_depuis_dernier >= 3:
-            alerts.append(f"🟠 Aucune soumission depuis {jours_depuis_dernier} jours — vérifier que la collecte est toujours active.")
+            alerts.append(("warning", f"{len(df_inc_f)} soumission(s) incomplète(s) mise(s) de côté — page "
+                                      "« Mises de côté »."))
+        if jours_depuis_dernier is not None and jours_depuis_dernier >= JOURS_INACTIVITE_ALERTE:
+            alerts.append(("warning", f"Aucune soumission depuis {jours_depuis_dernier} jours — vérifier que la "
+                                      "collecte est toujours active."))
+        if len(pas_commencees):
+            alerts.append(("error", f"{len(pas_commencees)} aire(s) de santé pas encore commencée(s) : "
+                                    + ", ".join(pas_commencees["Aire de santé"]) + "."))
         if not alerts:
-            st.success("Aucune alerte détectée sur les critères surveillés.")
-        else:
-            for a in alerts:
-                st.write(a)
+            st.success("Aucune alerte détectée sur les critères surveillés.", icon="✅")
+        for niveau, texte in alerts:
+            (st.error if niveau == "error" else st.warning)(texte, icon="🔴" if niveau == "error" else "🟠")
 
-# --- Soumissions incomplètes mises de côté -----------------------------
-with tab_inc:
-    st.subheader("Soumissions incomplètes mises de côté")
-    st.caption(
-        "Ces soumissions sont exclues de tous les indicateurs et de l'objectif de "
-        f"{OBJECTIF_MENAGES} ménages. Une soumission est mise de côté si : un champ "
-        "d'identification (date, enquêteur, aire de santé) est vide ; l'éligibilité ou le "
-        "consentement n'est pas renseigné ; le ménage est éligible et consentant mais le "
-        "questionnaire a été interrompu (champ obligatoire vide) ; ou elle a été marquée "
-        "« Non approuvée » dans la validation Kobo. Une fois corrigée dans Kobo, elle "
-        "réintègre automatiquement les indicateurs à la prochaine actualisation."
-    )
-    if df_inc_f.empty:
-        st.success("Aucune soumission incomplète pour la sélection actuelle.")
-    else:
-        ic1, ic2 = st.columns(2)
-        with ic1:
-            st.markdown("**Par enquêteur** (à recontacter en priorité)")
-            if "ID03" in df_inc_f.columns:
-                par_enq = (df_inc_f["ID03"].map(ENQUETEURS).fillna(df_inc_f["ID03"])
-                           .fillna("Enquêteur non renseigné")
-                           .value_counts().rename_axis("Enquêteur").reset_index(name="Incomplètes"))
-                st.dataframe(par_enq, hide_index=True, use_container_width=True)
-        with ic2:
-            st.markdown("**Par motif**")
-            par_motif = (df_inc_f["MOTIF_MISE_DE_COTE"].str.split(" ; ").explode()
-                         .value_counts().rename_axis("Motif").reset_index(name="Soumissions"))
-            st.dataframe(par_motif[["Soumissions", "Motif"]], hide_index=True, use_container_width=True)
+    duree_col = next((c for c in df_f.columns if c.split("/")[-1] == "DUREE_MIN"), None)
+    if duree_col:
+        with carte("q_durees"):
+            ui.card_title("Durée des entretiens", "minutes")
+            duree = pd.to_numeric(df_f[duree_col], errors="coerce").dropna()
+            if len(duree):
+                fig = go.Figure(go.Histogram(x=duree, nbinsx=25, marker_color=theme.ACCENT,
+                                             marker_line=dict(color="#ffffff", width=2),
+                                             hovertemplate="%{x} min : %{y} entretien(s)<extra></extra>"))
+                fig.add_vline(x=5, line_dash="dash", line_color=theme.CRITICAL)
+                fig.add_annotation(x=5, y=1, yref="paper", yanchor="bottom", xanchor="left", showarrow=False,
+                                   text="seuil 5 min", font=dict(color=theme.CRITICAL, size=12))
+                fig.update_xaxes(title="Durée (min)")
+                fig.update_yaxes(title="Entretiens")
+                theme.apply_layout(fig, height=260)
+                fig.update_layout(margin=dict(t=28))
+                st.plotly_chart(fig, width="stretch", config=PLOTLY_CONFIG, key="q_hist")
 
-        st.markdown("**Liste détaillée**")
-        cols_inc = [c for c in ["N_FORMULAIRE", "MOTIF_MISE_DE_COTE", "ID01", "ID06", "ID02",
-                                "ID03", "ID04", "ID05", "A01", "A02", "A04", "HESITATION"]
-                    if c in df_inc_f.columns]
-        vue_inc = df_inc_f[cols_inc].copy()
-        if "ID02" in vue_inc.columns:
-            vue_inc["ID02"] = pd.to_datetime(vue_inc["ID02"], errors="coerce").dt.date
-        if "ID03" in vue_inc.columns:
-            vue_inc["ID03"] = vue_inc["ID03"].map(ENQUETEURS).fillna(vue_inc["ID03"])
-        if "ID04" in vue_inc.columns:
-            vue_inc["ID04"] = vue_inc["ID04"].map(AIRES_SANTE).fillna(vue_inc["ID04"])
-        vue_inc = vue_inc.rename(columns={"MOTIF_MISE_DE_COTE": "Motif", "ID02": "Date",
-                                          "ID03": "Enquêteur", "ID04": "Aire de santé"})
-        vue_inc = vue_inc.astype(object).where(vue_inc.notna(), "—").astype(str)
-        st.dataframe(vue_inc, hide_index=True, use_container_width=True)
-        buf_inc = io.BytesIO()
-        df_inc_f.to_csv(buf_inc, index=False)
-        st.download_button(
-            "⬇️ Télécharger les soumissions mises de côté (CSV)",
-            data=buf_inc.getvalue(),
-            file_name=f"vaxsuivi_lemba_incompletes_{date.today().isoformat()}.csv",
-            mime="text/csv",
+    cols_dedup = [c for c in ["ID04", "ID05", "C01", "C03"] if c in df_f.columns]
+    if len(cols_dedup) >= 2 and qr["doublons_menage"]:
+        with carte("q_doublons"):
+            ui.card_title("Doublons potentiels à vérifier", " + ".join(cols_dedup))
+            sub = df_f.dropna(subset=cols_dedup, how="all")
+            dup = sub[sub.duplicated(subset=cols_dedup, keep=False)].sort_values(cols_dedup)
+            cols = [c for c in ["N_FORMULAIRE", "ID01", "ID02", "ID03"] + cols_dedup if c in dup.columns]
+            vue = dup[cols].copy()
+            if "ID03" in vue.columns:
+                vue["ID03"] = vue["ID03"].map(ENQUETEURS).fillna(vue["ID03"])
+            if "ID04" in vue.columns:
+                vue["ID04"] = vue["ID04"].map(AIRES_SANTE).fillna(vue["ID04"])
+            if "ID02" in vue.columns:
+                vue["ID02"] = pd.to_datetime(vue["ID02"], errors="coerce").dt.date
+            vue = cellules_simples(vue)
+            vue = vue.astype(object).where(vue.notna(), "—").astype(str)
+            st.dataframe(vue.rename(columns={"ID02": "Date", "ID03": "Enquêteur",
+                                                               "ID04": "Aire de santé", "ID05": "Quartier/avenue"}),
+                         hide_index=True, width="stretch")
+
+
+def page_mises_de_cote() -> None:
+    ui.page_header("Mises de côté", f"{len(df_inc_f)} soumission(s)",
+                   "Soumissions incomplètes exclues de tous les indicateurs et de l'objectif de 424 ménages.")
+    with carte("inc"):
+        st.caption(
+            "Ces soumissions sont exclues de tous les indicateurs et de l'objectif de "
+            f"{OBJECTIF_MENAGES} ménages. Une soumission est mise de côté si : un champ "
+            "d'identification (date, enquêteur, aire de santé) est vide ; l'éligibilité ou le "
+            "consentement n'est pas renseigné ; le ménage est éligible et consentant mais le "
+            "questionnaire a été interrompu (champ obligatoire vide) ; ou elle a été marquée "
+            "« Non approuvée » dans la validation Kobo. Une fois corrigée dans Kobo, elle "
+            "réintègre automatiquement les indicateurs à la prochaine actualisation."
         )
+        if df_inc_f.empty:
+            st.success("Aucune soumission incomplète pour la sélection actuelle.")
+        else:
+            ic1, ic2 = st.columns(2)
+            with ic1:
+                st.markdown("**Par enquêteur** (à recontacter en priorité)")
+                if "ID03" in df_inc_f.columns:
+                    par_enq = (df_inc_f["ID03"].map(ENQUETEURS).fillna(df_inc_f["ID03"])
+                               .fillna("Enquêteur non renseigné")
+                               .value_counts().rename_axis("Enquêteur").reset_index(name="Incomplètes"))
+                    st.dataframe(par_enq, hide_index=True, width="stretch")
+            with ic2:
+                st.markdown("**Par motif**")
+                par_motif = (df_inc_f["MOTIF_MISE_DE_COTE"].str.split(" ; ").explode()
+                             .value_counts().rename_axis("Motif").reset_index(name="Soumissions"))
+                st.dataframe(par_motif[["Soumissions", "Motif"]], hide_index=True, width="stretch")
 
-# --- Données brutes / export -----------------------------------------
-with tab_data:
-    st.subheader("Données filtrées (soumissions complètes uniquement)")
-    num_cols = [c for c in ["N_FORMULAIRE", "N_MENAGE", "N_DANS_AIRE", "N_DANS_ENQUETEUR"] if c in df_f.columns]
-    autres_cols = [c for c in df_f.columns if c not in num_cols]
-    df_export = df_f[num_cols + autres_cols]
-    st.dataframe(df_export, use_container_width=True)
-    buf = io.BytesIO()
-    df_export.to_csv(buf, index=False)
-    st.download_button(
-        "⬇️ Télécharger en CSV",
-        data=buf.getvalue(),
-        file_name=f"vaxsuivi_lemba_export_{date.today().isoformat()}.csv",
-        mime="text/csv",
-    )
+            st.markdown("**Liste détaillée**")
+            cols_inc = [c for c in ["N_FORMULAIRE", "MOTIF_MISE_DE_COTE", "ID01", "ID06", "ID02",
+                                    "ID03", "ID04", "ID05", "A01", "A02", "A04", "HESITATION"]
+                        if c in df_inc_f.columns]
+            vue_inc = df_inc_f[cols_inc].copy()
+            if "ID02" in vue_inc.columns:
+                vue_inc["ID02"] = pd.to_datetime(vue_inc["ID02"], errors="coerce").dt.date
+            if "ID03" in vue_inc.columns:
+                vue_inc["ID03"] = vue_inc["ID03"].map(ENQUETEURS).fillna(vue_inc["ID03"])
+            if "ID04" in vue_inc.columns:
+                vue_inc["ID04"] = vue_inc["ID04"].map(AIRES_SANTE).fillna(vue_inc["ID04"])
+            vue_inc = vue_inc.rename(columns={"MOTIF_MISE_DE_COTE": "Motif", "ID02": "Date",
+                                              "ID03": "Enquêteur", "ID04": "Aire de santé"})
+            vue_inc = vue_inc.astype(object).where(vue_inc.notna(), "—").astype(str)
+            st.dataframe(vue_inc, hide_index=True, width="stretch")
+            buf_inc = io.BytesIO()
+            cellules_simples(df_inc_f).to_csv(buf_inc, index=False)
+            st.download_button(
+                "Télécharger les soumissions mises de côté (CSV)",
+                data=buf_inc.getvalue(), icon=":material/download:", type="primary",
+                file_name=f"vaxsuivi_lemba_incompletes_{date.today().isoformat()}.csv",
+                mime="text/csv",
+            )
 
-st.caption(
-    "VaxSuivi-Lemba — outil de suivi de terrain, pas de publication des résultats du mémoire. "
-    "Données traitées localement dans la session Streamlit ; aucune donnée n'est stockée par l'application elle-même."
-)
+
+def page_donnees_brutes() -> None:
+    ui.page_header("Données brutes", "export",
+                   "Consultation et téléchargement des soumissions (sélection filtrée).")
+    choix = st.segmented_control("Soumissions à afficher", ["Complètes", "Mises de côté", "Toutes"],
+                                 default="Complètes", key="brutes_choix")
+    if choix == "Mises de côté":
+        base_vue = df_inc_f
+    elif choix == "Toutes":
+        base_vue = pd.concat([df_f, df_inc_f])
+    else:
+        base_vue = df_f
+    with carte("brutes"):
+        ui.card_title(f"{len(base_vue)} soumission(s)", f"{base_vue.shape[1]} colonnes")
+        if base_vue.empty:
+            st.info("Aucune soumission pour ce choix et ces filtres. "
+                    + (f"{len(df_incomplet)} soumission(s) sont mises de côté : choisissez « Mises de côté » ou "
+                       "« Toutes »." if len(df_incomplet) and choix == "Complètes" else ""))
+            return
+        num_cols = [c for c in ["N_FORMULAIRE", "N_MENAGE", "N_DANS_AIRE", "N_DANS_ENQUETEUR", "MOTIF_MISE_DE_COTE"]
+                    if c in base_vue.columns]
+        autres = [c for c in base_vue.columns if c not in num_cols]
+        vue = cellules_simples(base_vue[num_cols + autres])
+        if "N_FORMULAIRE" in vue.columns:
+            vue = vue.sort_values("N_FORMULAIRE")
+        st.dataframe(vue, width="stretch", hide_index=True, height=520)
+        buf = io.BytesIO()
+        vue.to_csv(buf, index=False)
+        st.download_button("Télécharger en CSV", data=buf.getvalue(), icon=":material/download:",
+                           file_name=f"vaxsuivi_lemba_{choix.lower().replace(' ', '_')}_{date.today().isoformat()}.csv",
+                           mime="text/csv", type="primary")
+        st.caption("Le champ GPS (ID08) figure dans cet export : retirez-le de tout fichier partagé largement.")
+
+
+# ==================================================================
+# AIGUILLAGE — chaque page est isolée : une erreur reste confinée à sa page
+# ==================================================================
+FONCTIONS = {
+    "Tableau de bord": page_tableau_de_bord,
+    "Aires de santé": page_aires_de_sante,
+    "Enquêteurs": page_enqueteurs,
+    "Projection des analyses": page_projection,
+    "Qualité des données": page_qualite,
+    "Mises de côté": page_mises_de_cote,
+    "Données brutes": page_donnees_brutes,
+}
+with garde(page):
+    FONCTIONS[page]()
+
+st.caption("VaxSuivi-Lemba — outil de suivi de terrain, pas de publication des résultats du mémoire. "
+           "Données traitées en mémoire pour la session ; aucune donnée n'est stockée par l'application.")

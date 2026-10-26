@@ -43,14 +43,17 @@ Tableau de bord de suivi de la collecte de données (Streamlit) pour le mémoire
 > sur la base apurée. Le fichier d'exemple contient des variables fictives (B02, C03,
 > F05_RUMEURS, SCORE_CONNAISS, SCORE_CONFIANCE, C11 à C15) pour le démontrer.
 
-**Organisation du tableau de bord :** bandeau de phase, barre d'avancement vers les 424
-ménages (ménages évalués, restants, rythme moyen et estimation des jours de collecte
-restants), puis KPI principaux (dont le nombre de jours
-depuis la dernière soumission, utile pour repérer une interruption de terrain), puis sept
-onglets — *Vue d'ensemble* (tendance cumulée, volumes par aire/enquêteur), *Par
-enquêteur* (heatmap jour × enquêteur + tableau détaillé : volume, part, durée moyenne,
-éligibilité, dernière activité), *Par aire de santé* (statut des 14 AS + même détail par AS), *Projection des
-analyses*, *Qualité des données*, *Mises de côté* et *Données brutes / export*.
+**Organisation du tableau de bord (v8) :** menu latéral (sept pages) et cartes blanches.
+*Tableau de bord* : frise des phases du mémoire (protocole → pré-test → collecte → analyse →
+soutenance), avancement vers les 424 ménages, anneau de statut des 14 aires de santé,
+activité des 14 derniers jours, notification des AS pas commencées / à l'arrêt, progression
+cumulée (un seul axe), dernières soumissions, indicateurs de qualité et prévalence
+provisoire. Pages *Aires de santé*, *Enquêteurs*, *Projection des analyses*, *Qualité des
+données* (manquants, alertes, durées, liste des doublons), *Mises de côté* et *Données
+brutes* (complètes, mises de côté ou toutes, export CSV). Chaque page est rendue
+indépendamment : une donnée inattendue de l'export Kobo n'affiche qu'un message sur la page
+concernée, sans vider les autres. Les colonnes de groupes répétés (listes renvoyées par l'API
+Kobo) sont converties en texte pour l'affichage et l'export.
 
 **Ce que fait l'outil :** suivre l'avancement du terrain vers l'objectif de 424 ménages (nombre d'entretiens par aire
 de santé et par enquêteur, progression dans le temps), détecter d'éventuelles anomalies
@@ -70,6 +73,7 @@ l'Annexe 1 du questionnaire
 vaxsuivi_dashboard/
 ├── app.py                          # Application Streamlit (point d'entrée)
 ├── kobo_api.py                     # Client minimal pour l'API KoboToolbox
+├── ui.py                           # Composants d'interface (cartes, frise, menu, fil d'activité)
 ├── data_quality.py                 # Nettoyage, filtres, contrôles qualité, statut des AS
 ├── analyses.py                     # Projection des analyses statistiques du mémoire (§ 3.9)
 ├── requirements.txt

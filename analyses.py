@@ -137,6 +137,8 @@ def variables_candidates(base: pd.DataFrame) -> tuple[list[str], list[str]]:
     qual, quant = [], []
     for col in base.columns:
         court = _court(col)
+        if "/" in col and court in base.columns:     # doublon d'un alias créé par normalize_columns
+            continue
         if col == "_Y" or court in _EXCLUES_EXACT or col in _EXCLUES_EXACT \
                 or col.startswith(_EXCLUES_PREFIXES) or court.startswith("_"):
             continue
@@ -144,7 +146,14 @@ def variables_candidates(base: pd.DataFrame) -> tuple[list[str], list[str]]:
             qual.append(col)
             continue
         s = base[col].dropna()
-        if len(s) < 5 or s.nunique() < 2:
+        # Groupes répétés, pièces jointes, géolocalisation… : l'API Kobo renvoie des
+        # listes ou des dictionnaires, inexploitables comme facteurs (et non hachables).
+        if s.map(lambda v: isinstance(v, (list, dict, tuple, set))).any():
+            continue
+        try:
+            if len(s) < 5 or s.nunique() < 2:
+                continue
+        except TypeError:
             continue
         num = pd.to_numeric(s, errors="coerce")
         if num.notna().mean() > 0.95 and (s.nunique() > 10 or court.upper().startswith("SCORE")):
@@ -332,19 +341,31 @@ def regression_logistique(base: pd.DataFrame, qual: list[str], quant: list[str])
                           f"ou une modalité prédit parfaitement l'issue. Réduire le nombre de variables "
                           f"ou regrouper des modalités.", "n": len(d), "evenements": evenements, "k": k}
     ci = m.conf_int()
-    lignes = []
+    lignes, instables = [], []
     for terme in X.columns:
         b = m.params[terme]
         lo, hi = ci.loc[terme]
-        lignes.append({"Terme": terme, "ORa": math.exp(b), "IC bas": math.exp(lo), "IC haut": math.exp(hi),
-                       "ORa [IC95 %]": fmt_or(math.exp(b), math.exp(lo), math.exp(hi)),
-                       "p": m.pvalues[terme], "p (affiché)": fmt_p(m.pvalues[terme])})
+        se = m.bse[terme]
+        if not np.isfinite(se) or se > 5 or abs(b) > 10:
+            instables.append(terme)      # séparation (quasi) complète : estimation non interprétable
+        o, olo, ohi = _exp(b), _exp(lo), _exp(hi)
+        lignes.append({"Terme": terme, "ORa": o, "IC bas": olo, "IC haut": ohi,
+                       "ORa [IC95 %]": "instable" if terme in instables else fmt_or(o, olo, ohi),
+                       "p": m.pvalues[terme], "p (affiché)": "—" if terme in instables else fmt_p(m.pvalues[terme])})
     hl, p_hl, ddl = hosmer_lemeshow(y.values, m.predict().astype(float))
     auc = _auc(y.values, np.asarray(m.predict(), dtype=float))
     return {"n": len(d), "evenements": evenements, "k": k, "epv": evenements / k,
             "references": refs, "coefficients": pd.DataFrame(lignes), "vif": vif,
             "hl": hl, "p_hl": p_hl, "ddl_hl": ddl, "pseudo_r2": float(m.prsquared), "auc": auc,
-            "converge": bool(m.mle_retvals.get("converged", True))}
+            "converge": bool(m.mle_retvals.get("converged", True)), "instables": instables}
+
+
+def _exp(v: float) -> float:
+    """Exponentielle sans dépassement (séparation quasi complète → OR infini)."""
+    try:
+        return math.exp(v)
+    except OverflowError:
+        return math.inf
 
 
 def _auc(y, p) -> float:
