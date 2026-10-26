@@ -23,14 +23,34 @@ Tableau de bord de suivi de la collecte de données (Streamlit) pour le mémoire
 > réintègrent automatiquement les indicateurs une fois corrigées dans Kobo.
 > Le fichier d'exemple contient 6 soumissions incomplètes fictives pour le démontrer.
 
+> **Statut des 14 aires de santé.** En tête du tableau de bord, une notification indique
+> combien d'AS ont commencé la collecte et nomme celles qui ne l'ont **pas encore
+> commencée**, celles qui n'ont que des soumissions incomplètes et celles **à l'arrêt**
+> (aucune soumission depuis 3 jours ou plus — `JOURS_INACTIVITE_ALERTE`). Le tableau
+> détaillé est dans l'onglet *Par aire de santé*. Les cibles par AS (allocation
+> proportionnelle du mémoire, § 3.4.3) s'affichent dès que `ALLOCATION_AS` est renseigné
+> dans `data_quality.py`.
+
+> **Projection des analyses du mémoire (onglet 🔮).** Les analyses prévues au § 3.9 du
+> mémoire sont recalculées sur les données déjà reçues (module `analyses.py`) :
+> prévalence + IC95 % (Wilson) et précision projetée à 424 ménages (objectif 1) ;
+> description des variables (objectifs 2 à 4) ; analyse bivariée — Chi², Fisher, t de
+> Student/Mann-Whitney, ORb + IC95 %, présélection à p < 0,20 (objectif 5) ; régression
+> logistique multivariée — ORa + IC95 %, VIF, Hosmer-Lemeshow, aire sous la courbe ROC
+> (objectif 6) ; ponctualité vaccinale BCG / Penta 1 / Penta 3 / VAR 1 (C11 à C15).
+> Les variables sont détectées automatiquement dans l'export Kobo. **Ce sont des
+> résultats provisoires**, pas ceux du mémoire : l'analyse finale reste faite sous SPSS
+> sur la base apurée. Le fichier d'exemple contient des variables fictives (B02, C03,
+> F05_RUMEURS, SCORE_CONNAISS, SCORE_CONFIANCE, C11 à C15) pour le démontrer.
+
 **Organisation du tableau de bord :** bandeau de phase, barre d'avancement vers les 424
 ménages (ménages évalués, restants, rythme moyen et estimation des jours de collecte
 restants), puis KPI principaux (dont le nombre de jours
-depuis la dernière soumission, utile pour repérer une interruption de terrain), puis cinq
+depuis la dernière soumission, utile pour repérer une interruption de terrain), puis sept
 onglets — *Vue d'ensemble* (tendance cumulée, volumes par aire/enquêteur), *Par
 enquêteur* (heatmap jour × enquêteur + tableau détaillé : volume, part, durée moyenne,
-éligibilité, dernière activité), *Par aire de santé* (même détail par AS), *Qualité des
-données* et *Données brutes / export*.
+éligibilité, dernière activité), *Par aire de santé* (statut des 14 AS + même détail par AS), *Projection des
+analyses*, *Qualité des données*, *Mises de côté* et *Données brutes / export*.
 
 **Ce que fait l'outil :** suivre l'avancement du terrain vers l'objectif de 424 ménages (nombre d'entretiens par aire
 de santé et par enquêteur, progression dans le temps), détecter d'éventuelles anomalies
@@ -50,7 +70,8 @@ l'Annexe 1 du questionnaire
 vaxsuivi_dashboard/
 ├── app.py                          # Application Streamlit (point d'entrée)
 ├── kobo_api.py                     # Client minimal pour l'API KoboToolbox
-├── data_quality.py                 # Nettoyage, filtres, contrôles qualité
+├── data_quality.py                 # Nettoyage, filtres, contrôles qualité, statut des AS
+├── analyses.py                     # Projection des analyses statistiques du mémoire (§ 3.9)
 ├── requirements.txt
 ├── .streamlit/
 │   ├── config.toml                 # Thème de l'application

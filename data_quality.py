@@ -254,6 +254,79 @@ def summary_by_aire(df: pd.DataFrame) -> pd.DataFrame:
 
 
 # ------------------------------------------------------------------
+# STATUT DE LA COLLECTE PAR AIRE DE SANTÉ (14 AS)
+# ------------------------------------------------------------------
+# Cibles par AS selon l'allocation proportionnelle du mémoire (§ 3.4.3 :
+# nᵢ = Nᵢ/N × 424). À renseigner dès que les populations des AS sont fixées,
+# ex. {"AS01_Molo": 31, ...} ; tant que le dictionnaire est vide, seuls les
+# effectifs atteints sont affichés.
+ALLOCATION_AS: dict[str, int] = {}
+
+JOURS_INACTIVITE_ALERTE = 3
+
+
+def statut_aires(df_complet: pd.DataFrame, df_incomplet: pd.DataFrame | None = None,
+                 aujourd_hui=None) -> pd.DataFrame:
+    """Une ligne par aire de santé (les 14 AS, même sans aucune soumission) :
+    statut de démarrage, ménages évalués, dernière soumission, cible éventuelle.
+
+    Statuts : « Pas commencée » (aucune soumission, complète ou non),
+    « Commencée — incomplètes seulement » (seules des soumissions mises de côté),
+    « À l'arrêt » (commencée, mais rien depuis JOURS_INACTIVITE_ALERTE jours ou plus),
+    « En cours » (commencée et active), « Cible atteinte » (si ALLOCATION_AS renseignée).
+    """
+    aujourd_hui = pd.Timestamp(aujourd_hui or pd.Timestamp.today().normalize())
+    df_incomplet = df_incomplet if df_incomplet is not None else pd.DataFrame()
+
+    def _par_aire(df):
+        if df.empty or "ID04" not in df.columns:
+            return {}
+        return {a: sub for a, sub in df.groupby("ID04")}
+
+    comp, inc = _par_aire(df_complet), _par_aire(df_incomplet)
+    lignes = []
+    for code, nom in AIRES_SANTE.items():
+        sub = comp.get(code, pd.DataFrame())
+        n_inc = len(inc.get(code, []))
+        n_eval = int(evaluated_mask(sub).sum()) if not sub.empty else 0
+        derniere = None
+        if not sub.empty and "ID02" in sub.columns:
+            d = pd.to_datetime(sub["ID02"], errors="coerce").dropna()
+            derniere = d.max().normalize() if len(d) else None
+        premiere = None
+        if not sub.empty and "ID02" in sub.columns:
+            d = pd.to_datetime(sub["ID02"], errors="coerce").dropna()
+            premiere = d.min().normalize() if len(d) else None
+        jours = int((aujourd_hui - derniere).days) if derniere is not None else None
+        cible = ALLOCATION_AS.get(code)
+
+        if sub.empty and n_inc == 0:
+            statut = "Pas commencée"
+        elif sub.empty:
+            statut = "Commencée — incomplètes seulement"
+        elif cible and n_eval >= cible:
+            statut = "Cible atteinte"
+        elif jours is not None and jours >= JOURS_INACTIVITE_ALERTE:
+            statut = "À l'arrêt"
+        else:
+            statut = "En cours"
+
+        lignes.append({
+            "Code": code, "Aire de santé": nom, "Statut": statut,
+            "Entretiens complets": len(sub), "Ménages évalués": n_eval,
+            "Cible": cible, "Mises de côté": n_inc,
+            "Début": premiere.date().isoformat() if premiere is not None else None,
+            "Dernière soumission": derniere.date().isoformat() if derniere is not None else None,
+            "Jours sans soumission": jours,
+        })
+    out = pd.DataFrame(lignes)
+    out["Jours sans soumission"] = out["Jours sans soumission"].astype("Int64")
+    if not ALLOCATION_AS:
+        out = out.drop(columns="Cible")
+    return out
+
+
+# ------------------------------------------------------------------
 # SOUMISSIONS INCOMPLÈTES (mises de côté)
 # ------------------------------------------------------------------
 # Champs d'identification indispensables pour rattacher un entretien à une
